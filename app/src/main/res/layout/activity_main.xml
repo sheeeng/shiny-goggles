@@ -11,6 +11,7 @@
     tools:context="com.example.android.movies.MainActivity">
 
     <TextView
+        android:id="@+id/tv_display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
