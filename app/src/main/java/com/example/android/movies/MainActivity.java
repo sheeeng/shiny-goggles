@@ -18,12 +18,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextViewQueryResults;
     private TextView mTextViewErrorMessage;
     private ProgressBar mProgressBarQuery;
+    private ArrayList<Movie> arrayListMovies = new ArrayList<Movie>();
 
     /*
     //TODO: Uncomment this to try query after network state changes.
@@ -143,21 +145,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void analyzeJson(String stringJson) {
-            try {
-                JSONObject results = new JSONObject(stringJson);
-                JSONArray movies = results.getJSONArray("results");
+            if (!arrayListMovies.isEmpty()) {
+                arrayListMovies.clear();
+            }
 
-                for(int i=0; i<movies.length(); i++){
-                    JSONObject movie = movies.getJSONObject(i);
-                    Log.d(TAG, movie.getString("title"));
-                    Log.d(TAG, movie.getString("release_date"));
-                    Log.d(TAG, movie.getString("poster_path"));
+            try {
+                JSONObject jsonObjectResults = new JSONObject(stringJson);
+                JSONArray jsonArrayMovies = jsonObjectResults.getJSONArray("results");
+
+                for(int i=0; i<jsonArrayMovies.length(); i++){
+                    JSONObject jsonObjectMovie = jsonArrayMovies.getJSONObject(i);
+
+                    Movie movie = new Movie(
+                            jsonObjectMovie.getString("title"),
+                            jsonObjectMovie.getString("release_date"),
+                            jsonObjectMovie.getString("poster_path"),
+                            jsonObjectMovie.getString("vote_average"),
+                            jsonObjectMovie.getString("overview"));
+                    arrayListMovies.add(movie);
+                }
+
+                for (int i=0; i<arrayListMovies.size(); i++) {
+                    Log.d(TAG, arrayListMovies.get(i).title);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
