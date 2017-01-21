@@ -23,6 +23,18 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextViewErrorMessage;
     private ProgressBar mProgressBarQuery;
 
+    /*
+    //TODO: Uncomment this to try query after network state changes.
+    BroadcastReceiver broadcastReceiverConnectivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            queryMoviesDb();
+        }
+    };
+
+    IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
         mTextViewErrorMessage = (TextView) findViewById(R.id.tv_error_message);
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
         queryMoviesDb();
+        /*
+        //TODO: Uncomment this to try query after network state changes.
+        try {
+            registerReceiver(broadcastReceiverConnectivity, intentFilter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
     }
 
     public boolean isOnline() {
@@ -101,9 +121,24 @@ public class MainActivity extends AppCompatActivity {
             if (s != null && !s.equals("")) {
                 mTextViewQueryResults.setText(s);
                 showJsonDataView();
+                analyzeJson(s);
             } else {
                 showErrorMessage();
             }
+        }
+
+        private void analyzeJson(String stringJson) {
+            largeLog(TAG, stringJson);
+        }
+    }
+
+    // Credits to http://stackoverflow.com/a/25734136 post.
+    public static void largeLog(String tag, String content) {
+        if (content.length() > 4000) {
+            Log.d(tag, content.substring(0, 4000));
+            largeLog(tag, content.substring(4000));
+        } else {
+            Log.d(tag, content);
         }
     }
 }
