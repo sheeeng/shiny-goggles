@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.android.movies.utilities.NetworkUtils;
-
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void queryMoviesDb() {
-        URL moviesQueryUrl = NetworkUtils.buildUrl();
+        URL moviesQueryUrl = NetworkUtilities.buildUrl();
         new MoviesQueryTask().execute(moviesQueryUrl);
     }
 
@@ -105,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             if (isOnline()) {
                 Log.d(TAG, "Query working while online.");
                 try {
-                    moviesQueryResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+                    moviesQueryResults = NetworkUtilities.getResponseFromHttpUrl(searchUrl);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

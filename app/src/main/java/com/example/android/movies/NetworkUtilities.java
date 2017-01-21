@@ -1,4 +1,4 @@
-package com.example.android.movies.utilities;
+package com.example.android.movies;
 
 import android.net.Uri;
 import android.util.Log;
@@ -13,8 +13,8 @@ import java.util.Scanner;
 /**
  * These utilities will be used to communicate with the network.
  */
-public class NetworkUtils {
-    static final String TAG = NetworkUtils.class.getSimpleName();
+public class NetworkUtilities {
+    static final String TAG = NetworkUtilities.class.getSimpleName();
     final static String MOVIEDB_BASE_URL =
             "http://api.themoviedb.org/3/movie/popular?";
     final static String PARAM_API_KEY_QUERY = "api_key";
