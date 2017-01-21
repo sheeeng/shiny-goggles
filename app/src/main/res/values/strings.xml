@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Movies</string>
+    <string name="action_query">Query</string>
+    <string name="error_message_query_fail">Fail the query has.\nTry again you must.</string>
 </resources>

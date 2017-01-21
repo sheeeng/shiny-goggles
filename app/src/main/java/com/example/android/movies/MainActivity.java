@@ -6,6 +6,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.movies.utilities.NetworkUtils;
@@ -13,14 +18,18 @@ import com.example.android.movies.utilities.NetworkUtils;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    static final String TAG = "# MOVIES LOGS";
-    private TextView mTextViewDisplay;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private TextView mTextViewQueryResults;
+    private TextView mTextViewErrorMessage;
+    private ProgressBar mProgressBarQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTextViewDisplay = (TextView) findViewById(R.id.tv_display);
+        mTextViewQueryResults = (TextView) findViewById(R.id.tv_query_results);
+        mTextViewErrorMessage = (TextView) findViewById(R.id.tv_error_message);
+        mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
         queryMoviesDb();
     }
 
@@ -32,33 +41,69 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void queryMoviesDb() {
-        if (isOnline()) {
-            Log.d(TAG, "Online!");
-            URL moviesQueryUrl = NetworkUtils.buildUrl();
-            new MoviesQueryTask().execute(moviesQueryUrl);
-        } else {
-            Log.d(TAG, "Offline!");
+        URL moviesQueryUrl = NetworkUtils.buildUrl();
+        new MoviesQueryTask().execute(moviesQueryUrl);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.query, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_query) {
+            mTextViewQueryResults.setText("");
+            queryMoviesDb();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showJsonDataView() {
+        mTextViewQueryResults.setVisibility(View.VISIBLE);
+        mTextViewErrorMessage.setVisibility(View.INVISIBLE);
+    }
+
+    private void showErrorMessage() {
+        mTextViewErrorMessage.setVisibility(View.VISIBLE);
+        mTextViewQueryResults.setVisibility(View.INVISIBLE);
     }
 
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBarQuery.setVisibility(View.VISIBLE);
+        }
+        @Override
         protected String doInBackground(URL... urls) {
             URL searchUrl = urls[0];
             String moviesQueryResults = null;
-            try {
-                moviesQueryResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (isOnline()) {
+                Log.d(TAG, "Query working while online.");
+                try {
+                    moviesQueryResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(TAG, "Query will not work while offline.");
             }
             return moviesQueryResults;
         }
         @Override
         protected void onPostExecute(String s) {
-            if (s != null && !s.equals("")) {
-                mTextViewDisplay.setText(s);
-            }
             super.onPostExecute(s);
+            mProgressBarQuery.setVisibility(View.INVISIBLE);
+            if (s != null && !s.equals("")) {
+                mTextViewQueryResults.setText(s);
+                showJsonDataView();
+            } else {
+                showErrorMessage();
+            }
         }
     }
 }

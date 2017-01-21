@@ -14,7 +14,7 @@ import java.util.Scanner;
  * These utilities will be used to communicate with the network.
  */
 public class NetworkUtils {
-    static final String TAG = "# MOVIES LOGS";
+    static final String TAG = NetworkUtils.class.getSimpleName();
     final static String MOVIEDB_BASE_URL =
             "http://api.themoviedb.org/3/movie/popular?";
     final static String PARAM_API_KEY_QUERY = "api_key";
