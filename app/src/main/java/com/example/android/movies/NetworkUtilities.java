@@ -15,8 +15,10 @@ import java.util.Scanner;
  */
 public class NetworkUtilities {
     static final String TAG = NetworkUtilities.class.getSimpleName();
-    final static String MOVIEDB_BASE_URL =
-            "http://api.themoviedb.org/3/movie/popular?";
+    final static String MOVIEDB_API_URL =
+            "api.themoviedb.org";  // "http://api.themoviedb.org/3/movie/popular?";
+    final static String POPULAR = "popular";
+    final static String TOP_RATED = "top_rated";
     final static String PARAM_API_KEY_QUERY = "api_key";
     final static String API_KEY =
             "";  // TODO: Replace with your own API key.
@@ -26,10 +28,26 @@ public class NetworkUtilities {
      *
      * @return The URL to use to query the weather server.
      */
-    public static URL buildUrl() {
-        Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                .appendQueryParameter(PARAM_API_KEY_QUERY, API_KEY)
-                .build();
+    public static URL buildUrl(MovieCategories movieCategories) {
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("http");
+        uriBuilder.authority(MOVIEDB_API_URL);
+        uriBuilder.appendPath("3");
+        uriBuilder.appendPath("movie");
+
+        if (movieCategories.equals(MovieCategories.POPULAR)) {
+            uriBuilder.appendPath(POPULAR);
+        } else if (movieCategories.equals(MovieCategories.TOP_RATED)) {
+            uriBuilder.appendPath(TOP_RATED);
+        } else {
+            uriBuilder.appendPath(POPULAR);
+        }
+
+        uriBuilder.appendQueryParameter(PARAM_API_KEY_QUERY, API_KEY);
+        Log.d(TAG, uriBuilder.toString());
+
+        Uri builtUri = uriBuilder.build();
+        Log.d(TAG, builtUri.toString());
 
         URL url = null;
         try {

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mTextViewQueryResults = (TextView) findViewById(R.id.tv_query_results);
         mTextViewErrorMessage = (TextView) findViewById(R.id.tv_error_message);
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
-        queryMoviesDb();
+        queryMoviesDb(MovieCategories.POPULAR);
         /*
         //TODO: Uncomment this to try query after network state changes.
         try {
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
-    private void queryMoviesDb() {
-        URL moviesQueryUrl = NetworkUtilities.buildUrl();
+    private void queryMoviesDb(MovieCategories movieCategories) {
+        URL moviesQueryUrl = NetworkUtilities.buildUrl(movieCategories);
         new MoviesQueryTask().execute(moviesQueryUrl);
     }
 
@@ -72,10 +72,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_query) {
-            mTextViewQueryResults.setText("");
-            queryMoviesDb();
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_query_popular_movies:
+                mTextViewQueryResults.setText("");
+                queryMoviesDb(MovieCategories.POPULAR);
+                return true;
+            case R.id.action_query_top_rated_movies:
+                mTextViewQueryResults.setText("");
+                queryMoviesDb(MovieCategories.TOP_RATED);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
