@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -130,8 +134,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void analyzeJson(String stringJson) {
-            largeLog(TAG, stringJson);
+        void analyzeJson(String stringJson) {
+            try {
+                JSONObject results = new JSONObject(stringJson);
+                JSONArray movies = results.getJSONArray("results");
+
+                for(int i=0; i<movies.length(); i++){
+                    JSONObject movie = movies.getJSONObject(i);
+                    Log.d(TAG, movie.getString("title"));
+                    Log.d(TAG, movie.getString("release_date"));
+                    Log.d(TAG, movie.getString("poster_path"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 
