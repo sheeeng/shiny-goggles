@@ -19,26 +19,14 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextViewQueryResults;
     private TextView mTextViewErrorMessage;
     private ProgressBar mProgressBarQuery;
-    private ArrayList<Movie> arrayListMovies = new ArrayList<Movie>();
-
-    /*
-    //TODO: Uncomment this to try query after network state changes.
-    BroadcastReceiver broadcastReceiverConnectivity = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            queryMoviesDb();
-        }
-    };
-
-    IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-    */
-
+    private List<Movie> listMovies = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +35,6 @@ public class MainActivity extends AppCompatActivity {
         mTextViewErrorMessage = (TextView) findViewById(R.id.tv_error_message);
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
         queryMoviesDb(MovieCategories.POPULAR);
-        /*
-        //TODO: Uncomment this to try query after network state changes.
-        try {
-            registerReceiver(broadcastReceiverConnectivity, intentFilter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
     }
 
     public boolean isOnline() {
@@ -145,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void analyzeJson(String stringJson) {
-            if (!arrayListMovies.isEmpty()) {
-                arrayListMovies.clear();
+            if (!listMovies.isEmpty()) {
+                listMovies.clear();
             }
 
             try {
@@ -162,25 +142,15 @@ public class MainActivity extends AppCompatActivity {
                             jsonObjectMovie.getString("poster_path"),
                             jsonObjectMovie.getString("vote_average"),
                             jsonObjectMovie.getString("overview"));
-                    arrayListMovies.add(movie);
+                    listMovies.add(movie);
                 }
 
-                for (int i=0; i<arrayListMovies.size(); i++) {
-                    Log.d(TAG, arrayListMovies.get(i).title);
+                for (int i = 0; i< listMovies.size(); i++) {
+                    Log.d(TAG, listMovies.get(i).title);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    // Credits to http://stackoverflow.com/a/25734136 post.
-    public static void largeLog(String tag, String content) {
-        if (content.length() > 4000) {
-            Log.d(tag, content.substring(0, 4000));
-            largeLog(tag, content.substring(4000));
-        } else {
-            Log.d(tag, content);
         }
     }
 }
