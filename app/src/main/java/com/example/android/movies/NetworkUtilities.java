@@ -17,8 +17,10 @@ public class NetworkUtilities {
     static final String TAG = NetworkUtilities.class.getSimpleName();
     final static String MOVIEDB_API_URL =
             "api.themoviedb.org";  // "http://api.themoviedb.org/3/movie/popular?";
+    final static String NOW_PLAYING = "now_playing";
     final static String POPULAR = "popular";
     final static String TOP_RATED = "top_rated";
+    final static String UPCOMING = "upcoming";
     final static String PARAM_API_KEY_QUERY = "api_key";
     final static String API_KEY =
             "";  // TODO: Replace with your own API key.
@@ -35,12 +37,16 @@ public class NetworkUtilities {
         uriBuilder.appendPath("3");
         uriBuilder.appendPath("movie");
 
-        if (movieCategories.equals(MovieCategories.POPULAR)) {
+        if (movieCategories.equals(MovieCategories.NOW_PLAYING)) {
+            uriBuilder.appendPath(NOW_PLAYING);
+        } else if (movieCategories.equals(MovieCategories.POPULAR)) {
             uriBuilder.appendPath(POPULAR);
         } else if (movieCategories.equals(MovieCategories.TOP_RATED)) {
             uriBuilder.appendPath(TOP_RATED);
+        } else if (movieCategories.equals(MovieCategories.UPCOMING)) {
+            uriBuilder.appendPath(UPCOMING);
         } else {
-            uriBuilder.appendPath(POPULAR);
+            uriBuilder.appendPath(NOW_PLAYING);
         }
 
         uriBuilder.appendQueryParameter(PARAM_API_KEY_QUERY, API_KEY);

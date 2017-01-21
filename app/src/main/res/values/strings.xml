@@ -1,6 +1,9 @@
 <resources>
+
     <string name="app_name">Movies</string>
+    <string name="action_query_now_playing_movies">Now Playing</string>
     <string name="action_query_popular_movies">Popular</string>
     <string name="action_query_top_rated_movies">Top Rated</string>
+    <string name="action_query_upcoming_movies">Upcoming</string>
     <string name="error_message_query_fail">Fail the query has.\nTry again you must.</string>
 </resources>

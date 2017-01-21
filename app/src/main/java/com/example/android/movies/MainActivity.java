@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_query_now_playing_movies:
+                mTextViewQueryResults.setText("");
+                queryMoviesDb(MovieCategories.NOW_PLAYING);
+                return true;
             case R.id.action_query_popular_movies:
                 mTextViewQueryResults.setText("");
                 queryMoviesDb(MovieCategories.POPULAR);
@@ -84,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_query_top_rated_movies:
                 mTextViewQueryResults.setText("");
                 queryMoviesDb(MovieCategories.TOP_RATED);
+                return true;
+            case R.id.action_query_upcoming_movies:
+                mTextViewQueryResults.setText("");
+                queryMoviesDb(MovieCategories.UPCOMING);
                 return true;
         }
         return super.onOptionsItemSelected(item);

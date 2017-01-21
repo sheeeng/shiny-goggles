@@ -4,11 +4,19 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_query_now_playing_movies"
+        android:title="@string/action_query_now_playing_movies" />
+
+    <item
         android:id="@+id/action_query_popular_movies"
         android:title="@string/action_query_popular_movies" />
 
     <item
         android:id="@+id/action_query_top_rated_movies"
         android:title="@string/action_query_top_rated_movies" />
+
+    <item
+        android:id="@+id/action_query_upcoming_movies"
+        android:title="@string/action_query_upcoming_movies" />
 
 </menu>
