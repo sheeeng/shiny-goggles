@@ -5,12 +5,15 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,19 +23,76 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements MovieAdapter.ItemClickListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private ProgressBar mProgressBarQuery;
+    private static final int NUM_LIST_ITEMS = 1000;
+
     private MovieAdapter mMovieAdapter;
+    private RecyclerView mNumbersList;
     private List<Movie> mListMovies = new ArrayList<>();
+
+    /*
+     * If we hold a reference to our Toast, we can cancel it (if it's showing)
+     * to display a new Toast. If we didn't do this, Toasts would be delayed
+     * in showing up if you clicked many list items in quick succession.
+     */
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
+
+        /*
+         * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
+         * do things like set the adapter of the RecyclerView and toggle the visibility.
+         */
+        mNumbersList = (RecyclerView) findViewById(R.id.rv_movies);
+
+        /*
+         * A LinearLayoutManager is responsible for measuring and positioning item views within a
+         * RecyclerView into a linear list. This means that it can produce either a horizontal or
+         * vertical list depending on which parameter you pass in to the LinearLayoutManager
+         * constructor. By default, if you don't specify an orientation, you get a vertical list.
+         * In our case, we want a vertical list, so we don't need to pass in an orientation flag to
+         * the LinearLayoutManager constructor.
+         *
+         * There are other LayoutManagers available to display your data in uniform grids,
+         * staggered grids, and more! See the developer documentation for more details.
+         */
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        mNumbersList.setLayoutManager(layoutManager);
+
+        /*
+         * Use this setting to improve performance if you know that changes in content do not
+         * change the child layout size in the RecyclerView
+         */
+        mNumbersList.setHasFixedSize(true);
+
+        /*
+         * The MovieAdapter is responsible for displaying each item in the list.
+         */
+        mMovieAdapter = new MovieAdapter(NUM_LIST_ITEMS, this);
+        mNumbersList.setAdapter(mMovieAdapter);
+
         queryMoviesDb(MovieCategories.POPULAR);
+    }
+
+    @Override
+    public void onItemClick(int clickedItemIndex) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+
+        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
     }
 
     public boolean isConnectivityAvailable() {
