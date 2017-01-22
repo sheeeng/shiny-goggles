@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def loadKey(String property) {
+    Properties properties = new Properties();
+    properties.load(new FileInputStream("app/key.properties"))
+    return "\"" + properties.getProperty(property) + "\""
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -12,7 +18,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "MOVIEDB_API_KEY", loadKey("movieDbApiKey")
+        }
         release {
+            buildConfigField "String", "MOVIEDB_API_KEY", loadKey("movieDbApiKey")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

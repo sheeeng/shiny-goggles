@@ -23,8 +23,6 @@ public class NetworkUtilities {
     final static String TOP_RATED = "top_rated";
     final static String UPCOMING = "upcoming";
     final static String PARAM_API_KEY_QUERY = "api_key";
-    final static String API_KEY =
-            "";  // TODO: Replace with your own API key.
 
     /**
      * Builds the URL used to query MovieDb.
@@ -50,7 +48,7 @@ public class NetworkUtilities {
             uriBuilder.appendPath(NOW_PLAYING);
         }
 
-        uriBuilder.appendQueryParameter(PARAM_API_KEY_QUERY, API_KEY);
+        uriBuilder.appendQueryParameter(PARAM_API_KEY_QUERY, BuildConfig.MOVIEDB_API_KEY);
         Log.d(LOG_TAG, uriBuilder.toString());
 
         Uri builtUri = uriBuilder.build();
