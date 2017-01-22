@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity
     private static final int NUM_LIST_ITEMS = 1000;
 
     private MovieAdapter mMovieAdapter;
-    private RecyclerView mNumbersList;
+    private RecyclerView mRecyclerViewMovies;
     private List<Movie> mListMovies = new ArrayList<>();
 
     /*
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
          * do things like set the adapter of the RecyclerView and toggle the visibility.
          */
-        mNumbersList = (RecyclerView) findViewById(R.id.rv_movies);
+        mRecyclerViewMovies = (RecyclerView) findViewById(R.id.rv_movies);
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
@@ -66,19 +66,19 @@ public class MainActivity extends AppCompatActivity
          * staggered grids, and more! See the developer documentation for more details.
          */
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mNumbersList.setLayoutManager(layoutManager);
+        mRecyclerViewMovies.setLayoutManager(layoutManager);
 
         /*
          * Use this setting to improve performance if you know that changes in content do not
          * change the child layout size in the RecyclerView
          */
-        mNumbersList.setHasFixedSize(true);
+        mRecyclerViewMovies.setHasFixedSize(true);
 
         /*
          * The MovieAdapter is responsible for displaying each item in the list.
          */
         mMovieAdapter = new MovieAdapter(NUM_LIST_ITEMS, this);
-        mNumbersList.setAdapter(mMovieAdapter);
+        mRecyclerViewMovies.setAdapter(mMovieAdapter);
 
         queryMoviesDb(MovieCategories.POPULAR);
     }
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     mListMovies = getMovies(s);
                     for(int i=0; i<mListMovies.size(); i++) {
-                        Log.d(LOG_TAG, mListMovies.get(i).title);
+                        Log.d(LOG_TAG, mListMovies.get(i).getTitle());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
