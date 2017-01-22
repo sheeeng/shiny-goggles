@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -120,8 +119,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         else
             Log.d(LOG_TAG, "View holder is valid.");
 
-        viewHolder.viewHolderIndex.setText("ViewHolder index: " + viewHolderCount);
-
         int backgroundColorForViewHolder = ColorUtilities
                 .getViewHolderBackgroundColorFromInstance(context, viewHolderCount);
         viewHolder.itemView.setBackgroundColor(backgroundColorForViewHolder);
@@ -179,14 +176,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             implements View.OnClickListener {
 
         Context context;
-
         ImageView imageViewMoviePoster;
-        TextView textViewMovieTitle;
-
-        // Will display the position in the list, ie 0 through getItemCount() - 1
-        TextView listItemNumberView;
-        // Will display which ViewHolder is displaying this data
-        TextView viewHolderIndex;
 
         /**
          * Constructor for our ViewHolder. Within this constructor, we get a reference to our
@@ -201,11 +191,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             context = itemView.getContext();
 
             imageViewMoviePoster = (ImageView) itemView.findViewById(R.id.iv_item_movie_poster);
-            textViewMovieTitle = (TextView) itemView.findViewById(R.id.tv_item_movie_title);
-
-            listItemNumberView = (TextView) itemView.findViewById(R.id.tv_item_number);
-            viewHolderIndex = (TextView) itemView.findViewById(R.id.tv_view_holder_instance);
-
             itemView.setOnClickListener(this);
         }
 
@@ -219,10 +204,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     .load("http://image.tmdb.org/t/p/w185/" +
                             mListMovies.get(listIndex).getPosterPath())
                     .into(imageViewMoviePoster);
-
-            textViewMovieTitle.setText(mListMovies.get(listIndex).getTitle());
-
-            listItemNumberView.setText(String.valueOf(listIndex));
         }
 
         /**
