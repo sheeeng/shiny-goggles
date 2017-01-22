@@ -1,62 +1,56 @@
 package com.example.android.movies;
 
-public class Movie {
-    private String title;
-    private String release_date;
-    private String poster_path;
-    private String vote_average;
-    private String overview;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public Movie(String title,
-                 String release_date,
-                 String poster_path,
-                 String vote_average,
-                 String overview)
-    {
-        this.title = title;
-        this.release_date = release_date;
-        this.poster_path = poster_path;
-        this.vote_average = vote_average;
-        this.overview = overview;
+public class Movie {
+    private String poster_path;
+    private boolean adult;
+    private String overview;
+    private String release_date;
+    private int[] genre_ids;
+    private int id;
+    private String original_title;
+    private String original_language;
+    private String title;
+    private String backdrop_path;
+    private float popularity;
+    private int vote_count;
+    private boolean video;
+    private float vote_average;
+
+    public Movie() {
+
+    }
+
+    public Movie(JSONObject movie) throws JSONException {
+        this.id = movie.getInt("id");
+        this.title = movie.getString("title");
+        this.poster_path = movie.getString("poster_path");
+        this.backdrop_path = movie.getString("backdrop_path");
+        this.overview = movie.getString("overview");
+        this.vote_average = movie.getInt("vote_average");
+        this.release_date = movie.getString("release_date");
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getReleaseDate() {
         return release_date;
-    }
-
-    public void setReleaseDate(String release_date) {
-        this.release_date = release_date;
     }
 
     public String getPosterPath() {
         return poster_path;
     }
 
-    public void setPosterPath(String poster_path) {
-        this.poster_path = poster_path;
-    }
-
-    public String getVoteAverage() {
+    public float getVoteAverage() {
         return vote_average;
-    }
-
-    public void setVoteAverage(String vote_average) {
-        this.vote_average = vote_average;
     }
 
     public String getOverview() {
         return overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
 }

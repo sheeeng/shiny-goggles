@@ -25,14 +25,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements MovieAdapter.ItemClickListener {
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    private MovieResults mMovieResults;
     private ProgressBar mProgressBarQuery;
-    private static final int NUM_LIST_ITEMS = 1000;
-
     private MovieAdapter mMovieAdapter;
     private RecyclerView mRecyclerViewMovies;
-    private List<Movie> mListMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
-        mListMovies = new ArrayList<>();
 
         /*
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
@@ -73,6 +71,8 @@ public class MainActivity extends AppCompatActivity
          */
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerViewMovies.setAdapter(mMovieAdapter);
+
+        mMovieResults = new MovieResults();
 
         queryMoviesDb(MovieCategories.NOW_PLAYING);
     }
@@ -125,33 +125,24 @@ public class MainActivity extends AppCompatActivity
 
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
-            mListMovies = getMovieData(jsonData);
-//            for(int i=0; i<mListMovies.size(); i++) {
-//                Log.d(LOG_TAG, mListMovies.get(i).getTitle());
-//            }
-            mMovieAdapter.setMovieList(mListMovies);
+            mMovieResults.setListMovies(getJsonResults(jsonData));
+            for(int i=0; i<mMovieResults.getListMovies().size(); i++) {
+                Log.d(LOG_TAG, mMovieResults.getListMovies().get(i).getTitle());
+            }
+            mMovieAdapter.setMovieList(mMovieResults.getListMovies());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Movie> getMovieData(String jsonData) throws JSONException {
+    private List<Movie> getJsonResults(String jsonData) throws JSONException {
         JSONObject resultsData = new JSONObject(jsonData);
         JSONArray results = resultsData.getJSONArray("results");
-
         List<Movie> listMovies = new ArrayList<>();
-
         for (int i = 0; i < results.length(); i++) {
             JSONObject jsonMovie = results.getJSONObject(i);
-            Movie movie = new Movie(
-                    jsonMovie.getString("title"),
-                    jsonMovie.getString("release_date"),
-                    jsonMovie.getString("poster_path"),
-                    jsonMovie.getString("vote_average"),
-                    jsonMovie.getString("overview"));
-            listMovies.add(movie);
+            listMovies.add(new Movie(jsonMovie));
         }
-
         return listMovies;
     }
 
