@@ -1,6 +1,7 @@
 package com.example.android.movies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,13 +33,6 @@ public class MainActivity extends AppCompatActivity
     private MovieAdapter mMovieAdapter;
     private RecyclerView mRecyclerViewMovies;
     private List<Movie> mListMovies;
-
-    /*
-     * If we hold a reference to our Toast, we can cancel it (if it's showing)
-     * to display a new Toast. If we didn't do this, Toasts would be delayed
-     * in showing up if you clicked many list items in quick succession.
-     */
-    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +79,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(int clickedItemIndex, Movie movie) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-
-        String toastMessage = "Item #" + clickedItemIndex + " ( " +
-                movie.getTitle() + " ) clicked.";
-        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        mToast.show();
+        Intent intentMovieDetails = new Intent(
+                MainActivity.this, MovieDetailsActivity.class);
+        intentMovieDetails.putExtra(Intent.EXTRA_TEXT, movie.getTitle());
+        startActivity(intentMovieDetails);
     }
 
     public boolean isConnectivityAvailable() {
