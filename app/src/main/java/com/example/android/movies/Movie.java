@@ -8,10 +8,10 @@ public class Movie {
     String overview;
 
     public Movie(String title,
-            String release_date,
-            String poster_path,
-            String vote_average,
-            String overview)
+                 String release_date,
+                 String poster_path,
+                 String vote_average,
+                 String overview)
     {
         this.title = title;
         this.release_date = release_date;
