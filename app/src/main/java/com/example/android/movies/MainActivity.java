@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         mMovieAdapter = new MovieAdapter(NUM_LIST_ITEMS, this);
         mRecyclerViewMovies.setAdapter(mMovieAdapter);
 
-        queryMoviesDb(MovieCategories.POPULAR);
+        queryMoviesDb(MovieCategories.NOW_PLAYING);
     }
 
     @Override
@@ -133,6 +133,37 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void onCompleteMoviesQueryTask (String jsonData) {
+        try {
+            mListMovies = getMovieData(jsonData);
+            for(int i=0; i<mListMovies.size(); i++) {
+                Log.d(LOG_TAG, mListMovies.get(i).getTitle());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Movie> getMovieData(String jsonData) throws JSONException {
+        JSONObject resultsData = new JSONObject(jsonData);
+        JSONArray results = resultsData.getJSONArray("results");
+
+        List<Movie> listMovies = new ArrayList<>();
+
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject jsonMovie = results.getJSONObject(i);
+            Movie movie = new Movie(
+                    jsonMovie.getString("title"),
+                    jsonMovie.getString("release_date"),
+                    jsonMovie.getString("poster_path"),
+                    jsonMovie.getString("vote_average"),
+                    jsonMovie.getString("overview"));
+            listMovies.add(movie);
+        }
+
+        return listMovies;
+    }
+
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -160,35 +191,8 @@ public class MainActivity extends AppCompatActivity
             super.onPostExecute(s);
             mProgressBarQuery.setVisibility(View.INVISIBLE);
             if (s != null && !s.equals("")) {
-                try {
-                    mListMovies = getMovies(s);
-                    for(int i=0; i<mListMovies.size(); i++) {
-                        Log.d(LOG_TAG, mListMovies.get(i).getTitle());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                onCompleteMoviesQueryTask(s);
             }
-        }
-
-        private List<Movie> getMovies(String jsonData) throws JSONException {
-            JSONObject resultsData = new JSONObject(jsonData);
-            JSONArray results = resultsData.getJSONArray("results");
-
-            List<Movie> listMovies = new ArrayList<>();
-
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject jsonMovie = results.getJSONObject(i);
-                Movie movie = new Movie(
-                        jsonMovie.getString("title"),
-                        jsonMovie.getString("release_date"),
-                        jsonMovie.getString("poster_path"),
-                        jsonMovie.getString("vote_average"),
-                        jsonMovie.getString("overview"));
-                listMovies.add(movie);
-            }
-
-            return listMovies;
         }
     }
 }
