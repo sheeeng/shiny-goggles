@@ -9,12 +9,14 @@
         android:id="@+id/iv_item_movie_poster"
         android:layout_width="50dp"
         android:layout_height="80dp"
+        android:layout_gravity="center"
         android:layout_margin="8dp"/>
 
     <TextView
         android:id="@+id/tv_item_movie_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="8dp"/>
 
     <TextView

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
     private MovieAdapter mMovieAdapter;
     private RecyclerView mRecyclerViewMovies;
-    private List<Movie> mListMovies = new ArrayList<>();
+    private List<Movie> mListMovies;
 
     /*
      * If we hold a reference to our Toast, we can cancel it (if it's showing)
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
+        mListMovies = new ArrayList<>();
 
         /*
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
@@ -77,19 +78,20 @@ public class MainActivity extends AppCompatActivity
         /*
          * The MovieAdapter is responsible for displaying each item in the list.
          */
-        mMovieAdapter = new MovieAdapter(NUM_LIST_ITEMS, this);
+        mMovieAdapter = new MovieAdapter(this);
         mRecyclerViewMovies.setAdapter(mMovieAdapter);
 
         queryMoviesDb(MovieCategories.NOW_PLAYING);
     }
 
     @Override
-    public void onItemClick(int clickedItemIndex) {
+    public void onItemClick(int clickedItemIndex, Movie movie) {
         if (mToast != null) {
             mToast.cancel();
         }
 
-        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+        String toastMessage = "Item #" + clickedItemIndex + " ( " +
+                movie.getTitle() + " ) clicked.";
         mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
 
         mToast.show();
@@ -136,9 +138,10 @@ public class MainActivity extends AppCompatActivity
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
             mListMovies = getMovieData(jsonData);
-            for(int i=0; i<mListMovies.size(); i++) {
-                Log.d(LOG_TAG, mListMovies.get(i).getTitle());
-            }
+//            for(int i=0; i<mListMovies.size(); i++) {
+//                Log.d(LOG_TAG, mListMovies.get(i).getTitle());
+//            }
+            mMovieAdapter.setMovieList(mListMovies);
         } catch (JSONException e) {
             e.printStackTrace();
         }
