@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
     public void onItemClick(int clickedItemIndex, Movie movie) {
         Intent intentMovieDetails = new Intent(
                 MainActivity.this, MovieDetailsActivity.class);
-        intentMovieDetails.putExtra(Intent.EXTRA_TEXT, movie.getTitle());
+        intentMovieDetails.putExtra("MOVIE_DETAILS", movie);
         startActivity(intentMovieDetails);
     }
 
