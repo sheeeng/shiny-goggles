@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,14 +23,13 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements MovieAdapter.ItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private MovieResults movieResults;
+    private ArrayList<Movie> arrayListMovies;
     private ProgressBar progressBarQuery;
     private Toast toast;
     private MovieAdapter movieAdapter;
@@ -39,6 +39,17 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null ||
+                !savedInstanceState.containsKey(
+                        getString(R.string.saved_instance_name))) {
+            Log.d(LOG_TAG, "No previous saved instance.");
+            arrayListMovies = new ArrayList<Movie>();
+        } else {
+            Log.d(LOG_TAG, "Previous saved instance found.");
+            arrayListMovies = savedInstanceState.getParcelableArrayList(
+                    getString(R.string.saved_instance_name));
+        }
 
         progressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
 
@@ -74,9 +85,15 @@ public class MainActivity extends AppCompatActivity
         movieAdapter = new MovieAdapter(this);
         recyclerViewMovies.setAdapter(movieAdapter);
 
-        movieResults = new MovieResults();
-
         queryMoviesDb(MovieCategories.NOW_PLAYING);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        outState.putParcelableArrayList(
+                getString(R.string.saved_instance_name),
+                arrayListMovies);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     private void showToastNow(String message) {
@@ -141,25 +158,25 @@ public class MainActivity extends AppCompatActivity
 
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
-            movieResults.setListMovies(getJsonResults(jsonData));
-            for(int i = 0; i< movieResults.getListMovies().size(); i++) {
-                Log.d(LOG_TAG, movieResults.getListMovies().get(i).getTitle());
+            arrayListMovies = getJsonResults(jsonData);
+            for(int i = 0; i< arrayListMovies.size(); i++) {
+                Log.d(LOG_TAG, arrayListMovies.get(i).getTitle());
             }
-            movieAdapter.setMovieList(movieResults.getListMovies());
+            movieAdapter.setMovieList(arrayListMovies);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Movie> getJsonResults(String jsonData) throws JSONException {
+    private ArrayList<Movie> getJsonResults(String jsonData) throws JSONException {
         JSONObject resultsData = new JSONObject(jsonData);
         JSONArray results = resultsData.getJSONArray("results");
-        List<Movie> listMovies = new ArrayList<>();
+        ArrayList<Movie> arrayListMovies = new ArrayList<>();
         for (int i = 0; i < results.length(); i++) {
             JSONObject jsonMovie = results.getJSONObject(i);
-            listMovies.add(new Movie(jsonMovie));
+            arrayListMovies.add(new Movie(jsonMovie));
         }
-        return listMovies;
+        return arrayListMovies;
     }
 
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
