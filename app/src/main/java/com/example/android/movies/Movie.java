@@ -83,55 +83,74 @@ public class Movie implements Parcelable {
     public Boolean getVideo() { return video; }
     public Double getVoteAverage() { return vote_average; }
 
+
+    /**
+     * Parcelable
+     * Describe the kinds of special objects contained in this Parcelable instance's
+     * marshaled representation.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Parcelable
+     * Flatten this object in to a Parcel.
+     */
     @Override
-    public void writeToParcel(Parcel parcelOutgoing, int flags) {
-        parcelOutgoing.writeString(poster_path);
-        parcelOutgoing.writeByte((byte)(adult ? 1 : 0));
-        parcelOutgoing.writeString(overview);
-        parcelOutgoing.writeString(release_date);
-        parcelOutgoing.writeIntArray(genre_ids);
-        parcelOutgoing.writeInt(id);
-        parcelOutgoing.writeString(original_title);
-        parcelOutgoing.writeString(original_language);
-        parcelOutgoing.writeString(title);
-        parcelOutgoing.writeString(backdrop_path);
-        parcelOutgoing.writeDouble(popularity);
-        parcelOutgoing.writeInt(vote_count);
-        parcelOutgoing.writeByte((byte)(video ? 1 : 0));
-        parcelOutgoing.writeDouble(vote_average);
+    public void writeToParcel(Parcel parcelOut, int flags) {
+        parcelOut.writeString(poster_path);
+        parcelOut.writeByte((byte)(adult ? 1 : 0));
+        parcelOut.writeString(overview);
+        parcelOut.writeString(release_date);
+        parcelOut.writeIntArray(genre_ids);
+        parcelOut.writeInt(id);
+        parcelOut.writeString(original_title);
+        parcelOut.writeString(original_language);
+        parcelOut.writeString(title);
+        parcelOut.writeString(backdrop_path);
+        parcelOut.writeDouble(popularity);
+        parcelOut.writeInt(vote_count);
+        parcelOut.writeByte((byte)(video ? 1 : 0));
+        parcelOut.writeDouble(vote_average);
 
     }
 
+    /**
+     * Parcelable
+     * Classes implementing the Parcelable interface must also have a non-null static field
+     * called CREATOR of a type that implements the Parcelable.Creator interface.
+     */
     public static final Parcelable.Creator<Movie> CREATOR
             = new Parcelable.Creator<Movie>() {
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
+        public Movie createFromParcel(Parcel parcelIn) {
+            return new Movie(parcelIn);
         }
-
         public Movie[] newArray(int size) {
             return new Movie[size];
         }
     };
 
-    private Movie(Parcel parcelReceived) {
-        poster_path = parcelReceived.readString();
-        adult = parcelReceived.readByte() != 0;
-        overview = parcelReceived.readString();
-        release_date = parcelReceived.readString();
-        genre_ids = parcelReceived.createIntArray();
-        id = parcelReceived.readInt();
-        original_title = parcelReceived.readString();
-        original_language = parcelReceived.readString();
-        title = parcelReceived.readString();
-        backdrop_path = parcelReceived.readString();
-        popularity = parcelReceived.readDouble();
-        vote_count = parcelReceived.readInt();
-        video = parcelReceived.readByte() != 0;
-        vote_average = parcelReceived.readDouble();
+    /**
+     * Parcelable
+     * Classes implementing the Parcelable interface must also have a non-null static field
+     * called CREATOR of a type that implements the Parcelable.Creator interface.
+     */
+    private Movie(Parcel parcelIn) {
+        poster_path = parcelIn.readString();
+        adult = parcelIn.readByte() != 0;
+        overview = parcelIn.readString();
+        release_date = parcelIn.readString();
+        genre_ids = parcelIn.createIntArray();
+        id = parcelIn.readInt();
+        original_title = parcelIn.readString();
+        original_language = parcelIn.readString();
+        title = parcelIn.readString();
+        backdrop_path = parcelIn.readString();
+        popularity = parcelIn.readDouble();
+        vote_count = parcelIn.readInt();
+        video = parcelIn.readByte() != 0;
+        vote_average = parcelIn.readDouble();
     }
 }

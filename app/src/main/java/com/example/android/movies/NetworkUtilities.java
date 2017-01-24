@@ -27,7 +27,8 @@ public class NetworkUtilities {
     /**
      * Builds the URL used to query MovieDb.
      *
-     * @return The URL to use to query the weather server.
+     * @param movieCategories The categories of movies to be queried.
+     * @return The URL to use to query the movie database server.
      */
     public static URL buildUrl(MovieCategories movieCategories) {
         Uri.Builder uriBuilder = new Uri.Builder();

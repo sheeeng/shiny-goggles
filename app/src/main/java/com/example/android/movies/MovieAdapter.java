@@ -18,10 +18,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
 
     /*
-     * The number of ViewHolders that have been created. Typically, you can figure out how many
-     * there should be by determining how many list items fit on your screen at once and add 2 to 4
-     * to that number. That isn't the exact formula, but will give you an idea of how many
-     * ViewHolders have been created to display any given RecyclerView.
+     * The number of ViewHolders that might have been created. Typically, you can figure out
+     * how many there should be by determining how many list items fit on your screen at once
+     * and add 2 to 4 to that number. That isn't the exact formula, but will give you an idea
+     * of how many ViewHolders have been created to display any given RecyclerView.
      *
      * Here's some ASCII art to hopefully help you understand:
      *
@@ -61,33 +61,31 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      */
 
     private static int viewHolderCount;
-    private List<Movie> mListMovies;
+    private List<Movie> listMovies;
     // An on-click handler that we've custom defined to make it easy
     // for an Activity to interface with our RecyclerView.
     final private ItemClickListener mOnItemClickListener;
 
-
     /**
-     * The interface that receives onClick messages.
+     * The custom defined interface that receives onClick messages.
      */
     public interface ItemClickListener {
         void onItemClick(int clickedItemIndex, Movie movie);
     }
 
     /**
-     * Constructor for MovieAdapter that accepts a number of items to display and the specification
-     * for the ItemClickListener.
+     * Constructor for MovieAdapter that accepts a number of items to display and
+     * the specification for the ItemClickListener.
      *
      * @param listener Listener for list item clicks
      */
     public MovieAdapter(ItemClickListener listener) {
         viewHolderCount = 0;
-        mListMovies = new ArrayList<>();
+        listMovies = new ArrayList<>();
         mOnItemClickListener = listener;
     }
 
     /**
-     *
      * This gets called when each new ViewHolder is created. This happens when the RecyclerView
      * is laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
      *
@@ -107,25 +105,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
 
-        if (view == null)
-            Log.d(LOG_TAG, "View is NULL!");
-        else
-            Log.d(LOG_TAG, "View is valid.");
-
         MovieViewHolder viewHolder = new MovieViewHolder(view);
-
-        if (viewHolder == null)
-            Log.d(LOG_TAG, "View holder is NULL!");
-        else
-            Log.d(LOG_TAG, "View holder is valid.");
 
         int backgroundColorForViewHolder = ColorUtilities
                 .getViewHolderBackgroundColorFromInstance(context, viewHolderCount);
         viewHolder.itemView.setBackgroundColor(backgroundColorForViewHolder);
 
         viewHolderCount++;
-        Log.d(LOG_TAG, "onCreateViewHolder: number of ViewHolders created: "
-                + viewHolderCount);
+        Log.d(LOG_TAG, "Number of ViewHolders created: " + viewHolderCount);
+
         return viewHolder;
     }
 
@@ -146,23 +134,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     /**
-     * This method simply returns the number of items to display. It is used behind the scenes
-     * to help layout our Views and for animations.
+     * This method simply returns the number of items to display.
+     * It is used behind the scenes to help layout our Views and for animations.
      *
      * @return The number of items available
      */
     @Override
     public int getItemCount() {
-        return (mListMovies == null) ? 0 : mListMovies.size();
+        return (listMovies == null) ? 0 : listMovies.size();
     }
 
+    /**
+     * This method allow the list of objects to be passed into adapter for population.
+     */
     public void setMovieList(List<Movie> listMovie)
     {
         viewHolderCount = 0;
-        this.mListMovies.clear();
-        this.mListMovies.addAll(listMovie);
-        for(int i=0; i<mListMovies.size(); i++) {
-            Log.d(LOG_TAG, mListMovies.get(i).getTitle());
+        this.listMovies.clear();
+        this.listMovies.addAll(listMovie);
+        for(int i = 0; i< listMovies.size(); i++) {
+            Log.d(LOG_TAG, listMovies.get(i).getTitle());
         }
         // The adapter needs to know that the data has changed.
         // If we don't call this, app will crash!
@@ -170,7 +161,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     /**
+     * This method clear the list of objects in the adapter.
+     */
+    public void clearMovieList()
+    {
+        viewHolderCount = 0;
+        this.listMovies.clear();
+
+        // The adapter needs to know that the data has changed.
+        // If we don't call this, app will crash!
+        notifyDataSetChanged();
+    }
+
+    /**
      * Cache of the children views for a list item.
+     * Works perfectly with RecyclerView class.
      */
     class MovieViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
@@ -201,8 +206,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
          */
         void bind(int listIndex) {
             Glide.with(context)
-                    .load("http://image.tmdb.org/t/p/w185/" +
-                            mListMovies.get(listIndex).getPosterPath())
+                    .load(Constants.URLS.TMDB_IMAGE_SIZE_W185 +
+                            listMovies.get(listIndex).getPosterPath())
                     .into(imageViewMoviePoster);
         }
 
@@ -213,7 +218,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            mOnItemClickListener.onItemClick(clickedPosition, mListMovies.get(clickedPosition));
+            mOnItemClickListener.onItemClick(clickedPosition, listMovies.get(clickedPosition));
         }
     }
 }

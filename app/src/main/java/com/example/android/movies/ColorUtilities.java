@@ -8,9 +8,6 @@ import android.support.v4.content.ContextCompat;
  * ColorUtilities is a class with one method, used to color the ViewHolders in
  * the RecyclerView. I put in a separate class in an attempt to keep the
  * code organized.
- *
- * We aren't going to go into detail about how this method works, but feel
- * free to explore!
  */
 public class ColorUtilities {
 

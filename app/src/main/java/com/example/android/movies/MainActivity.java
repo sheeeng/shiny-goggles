@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,23 +29,24 @@ public class MainActivity extends AppCompatActivity
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private MovieResults mMovieResults;
-    private ProgressBar mProgressBarQuery;
-    private MovieAdapter mMovieAdapter;
-    private RecyclerView mRecyclerViewMovies;
+    private MovieResults movieResults;
+    private ProgressBar progressBarQuery;
+    private Toast toast;
+    private MovieAdapter movieAdapter;
+    private RecyclerView recyclerViewMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mProgressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
+        progressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
 
         /*
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
          * do things like set the adapter of the RecyclerView and toggle the visibility.
          */
-        mRecyclerViewMovies = (RecyclerView) findViewById(R.id.rv_movies);
+        recyclerViewMovies = (RecyclerView) findViewById(R.id.rv_movies);
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
@@ -58,30 +60,44 @@ public class MainActivity extends AppCompatActivity
          * staggered grids, and more! See the developer documentation for more details.
          */
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mRecyclerViewMovies.setLayoutManager(layoutManager);
+        recyclerViewMovies.setLayoutManager(layoutManager);
 
         /*
          * Use this setting to improve performance if you know that changes in content do not
          * change the child layout size in the RecyclerView
          */
-        mRecyclerViewMovies.setHasFixedSize(true);
+        recyclerViewMovies.setHasFixedSize(true);
 
         /*
          * The MovieAdapter is responsible for displaying each item in the list.
          */
-        mMovieAdapter = new MovieAdapter(this);
-        mRecyclerViewMovies.setAdapter(mMovieAdapter);
+        movieAdapter = new MovieAdapter(this);
+        recyclerViewMovies.setAdapter(movieAdapter);
 
-        mMovieResults = new MovieResults();
+        movieResults = new MovieResults();
 
         queryMoviesDb(MovieCategories.NOW_PLAYING);
     }
 
+    private void showToastNow(String message) {
+        if ( toast != null ) {
+            toast.cancel();
+        }
+
+        toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
+        toast.show();
+    }
+
     @Override
     public void onItemClick(int clickedItemIndex, Movie movie) {
+        if (isConnectivityAvailable() == false) {
+            showToastNow(getString(R.string.error_message_query_fail));
+            return;
+        }
+
         Intent intentMovieDetails = new Intent(
                 MainActivity.this, MovieDetailsActivity.class);
-        intentMovieDetails.putExtra("MOVIE_DETAILS", movie);
+        intentMovieDetails.putExtra(Constants.INTENT.MOVIE_DETAILS, movie);
         startActivity(intentMovieDetails);
     }
 
@@ -125,11 +141,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
-            mMovieResults.setListMovies(getJsonResults(jsonData));
-            for(int i=0; i<mMovieResults.getListMovies().size(); i++) {
-                Log.d(LOG_TAG, mMovieResults.getListMovies().get(i).getTitle());
+            movieResults.setListMovies(getJsonResults(jsonData));
+            for(int i = 0; i< movieResults.getListMovies().size(); i++) {
+                Log.d(LOG_TAG, movieResults.getListMovies().get(i).getTitle());
             }
-            mMovieAdapter.setMovieList(mMovieResults.getListMovies());
+            movieAdapter.setMovieList(movieResults.getListMovies());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -150,28 +166,34 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBarQuery.setVisibility(View.VISIBLE);
+            progressBarQuery.setVisibility(View.VISIBLE);
         }
         @Override
         protected String doInBackground(URL... urls) {
             URL searchUrl = urls[0];
             String moviesQueryResults = null;
             if (isConnectivityAvailable()) {
-                Log.d(LOG_TAG, "Query working while online.");
                 try {
                     moviesQueryResults = NetworkUtilities.getResponseFromHttpUrl(searchUrl);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                Log.d(LOG_TAG, "Query will not work while offline.");
+                Log.d(LOG_TAG, getString(R.string.error_message_query_fail));
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        showToastNow(getString(R.string.error_message_query_fail));
+                    }
+                });
             }
             return moviesQueryResults;
         }
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            mProgressBarQuery.setVisibility(View.INVISIBLE);
+
+            progressBarQuery.setVisibility(View.INVISIBLE);
+
             if (s != null && !s.equals("")) {
                 onCompleteMoviesQueryTask(s);
             }

@@ -8,6 +8,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MovieDetailsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
@@ -28,7 +34,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         imageViewMoviePoster = (ImageView) findViewById(R.id.iv_item_details_movie_poster);
         imageViewMovieBackdrop = (ImageView) findViewById(R.id.iv_item_details_movie_backdrop);
-
         textViewMovieTitle = (TextView) findViewById(R.id.tv_item_details_movie_title);
         textViewMovieReleaseDate = (TextView) findViewById(R.id.tv_item_details_movie_release_date);
         textViewMovieVoteAverage = (TextView) findViewById(R.id.tv_item_details_movie_vote_average);
@@ -36,22 +41,34 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         Intent intentSource = getIntent();
 
-        if (intentSource.hasExtra("MOVIE_DETAILS")) {
-            movie = intentSource.getParcelableExtra("MOVIE_DETAILS");
+        if (intentSource.hasExtra(Constants.INTENT.MOVIE_DETAILS)) {
+            movie = intentSource.getParcelableExtra(Constants.INTENT.MOVIE_DETAILS);
 
             Glide.with(this)
-                    .load("http://image.tmdb.org/t/p/w500/" +
+                    .load(Constants.URLS.TMDB_IMAGE_SIZE_W500 +
                             movie.getBackdropPath())
                     .into(imageViewMovieBackdrop);
 
             Glide.with(this)
-                    .load("http://image.tmdb.org/t/p/original/" +
+                    .load(Constants.URLS.TMDB_IMAGE_SIZE_W500 +
                             movie.getPosterPath())
                     .into(imageViewMoviePoster);
 
             textViewMovieTitle.setText(movie.getTitle());
-            textViewMovieReleaseDate.setText(movie.getReleaseDate());
-            textViewMovieVoteAverage.setText(movie.getVoteAverage().toString());
+
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateRelease = new Date();
+            try {
+                dateRelease = dateFormatter.parse(movie.getReleaseDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale("en", "US"));
+            textViewMovieReleaseDate.setText(getString(R.string.movie_details_release_date) +
+                    dateFormatter.format(dateRelease));
+
+            textViewMovieVoteAverage.setText(getString(R.string.movie_details_vote_averate) +
+                    movie.getVoteAverage().toString());
             textViewMovieOverview.setText(movie.getOverview());
         }
     }
