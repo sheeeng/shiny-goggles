@@ -2,7 +2,6 @@ package com.example.android.movies;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +31,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(JSONObject movie) throws JSONException {
-        Log.d(LOG_TAG, movie.toString());
+        //Log.d(LOG_TAG, movie.toString());
 
         this.poster_path = movie.getString("poster_path");
         this.adult = movie.getBoolean("adult");

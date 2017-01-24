@@ -2,10 +2,12 @@ package com.example.android.movies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +16,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private ArrayList<Movie> arrayListMovies;
+    Spinner spinner;
     private ProgressBar progressBarQuery;
     private Toast toast;
     private MovieAdapter movieAdapter;
@@ -96,6 +103,41 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
+    private AdapterView.OnItemSelectedListener spinnerOnItemSelectedListener =
+            new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+
+            String selectedCategory = parent.getItemAtPosition(pos).toString();
+            Log.d(LOG_TAG, selectedCategory);
+
+            String selectedValue = getResources().getStringArray(
+                    R.array.movie_categories_values)[parent.getSelectedItemPosition()];
+            Log.d(LOG_TAG, selectedValue);
+
+            Log.d(LOG_TAG, "Spinner item position selected: " + String.valueOf(parent.getSelectedItemPosition()));
+
+            switch (parent.getSelectedItemPosition()) {
+                case 0:
+                    queryMoviesDb(MovieCategories.NOW_PLAYING);
+                    break;
+                case 1:
+                    queryMoviesDb(MovieCategories.POPULAR);
+                    break;
+                case 2:
+                    queryMoviesDb(MovieCategories.TOP_RATED);
+                    break;
+                case 3:
+                    queryMoviesDb(MovieCategories.UPCOMING);
+                    break;
+            }
+        }
+
+        public void onNothingSelected(AdapterView parent) {
+            // Do nothing.
+        }
+    };
+
     private void showToastNow(String message) {
         if ( toast != null ) {
             toast.cancel();
@@ -134,34 +176,25 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.query, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_query_now_playing_movies:
-                queryMoviesDb(MovieCategories.NOW_PLAYING);
-                return true;
-            case R.id.action_query_popular_movies:
-                queryMoviesDb(MovieCategories.POPULAR);
-                return true;
-            case R.id.action_query_top_rated_movies:
-                queryMoviesDb(MovieCategories.TOP_RATED);
-                return true;
-            case R.id.action_query_upcoming_movies:
-                queryMoviesDb(MovieCategories.UPCOMING);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        MenuItem menuItem = menu.findItem(R.id.s_movie_categories);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.movie_categories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(spinnerOnItemSelectedListener);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
             arrayListMovies = getJsonResults(jsonData);
-            for(int i = 0; i< arrayListMovies.size(); i++) {
-                Log.d(LOG_TAG, arrayListMovies.get(i).getTitle());
-            }
+//            for(int i = 0; i< arrayListMovies.size(); i++) {
+//                Log.d(LOG_TAG, arrayListMovies.get(i).getTitle());
+//            }
             movieAdapter.setMovieList(arrayListMovies);
         } catch (JSONException e) {
             e.printStackTrace();
