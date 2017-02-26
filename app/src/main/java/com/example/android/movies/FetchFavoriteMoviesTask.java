@@ -39,7 +39,10 @@ public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, List<Movie>> 
             } while (cursor.moveToNext());
             cursor.close();
         }
-        Log.d(TAG, results.toString());
+
+        for(Movie movie : results) {
+            Log.d(TAG, movie.getTitle());
+        }
         return results;
     }
 

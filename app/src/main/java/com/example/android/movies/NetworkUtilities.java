@@ -16,8 +16,8 @@ import java.util.Scanner;
 public class NetworkUtilities {
     static final String TAG = NetworkUtilities.class.getSimpleName();
 
-    final static String MOVIEDB_API_URL =
-            "api.themoviedb.org";  // "http://api.themoviedb.org/3/movie/popular?";
+    // E.g. "http://api.themoviedb.org/3/movie/now_playing?"
+    final static String MOVIEDB_API_URL = "api.themoviedb.org";
     final static String NOW_PLAYING = "now_playing";
     final static String POPULAR = "popular";
     final static String TOP_RATED = "top_rated";
@@ -46,6 +46,7 @@ public class NetworkUtilities {
         } else if (movieCategories.equals(MovieCategories.UPCOMING)) {
             uriBuilder.appendPath(UPCOMING);
         } else {
+            Log.w(TAG, "Unknown option.");
             uriBuilder.appendPath(NOW_PLAYING);
         }
 
