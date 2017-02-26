@@ -34,7 +34,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-    implements MovieAdapter.ItemClickListener {
+    implements
+        MovieAdapter.ItemClickListener,
+        MoviesQueryTask.MoviesQueryTaskInterfaces{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(int clickedItemIndex, Movie movie) {
-        if (isConnectivityAvailable() == false) {
+        if (!isConnectivityAvailable()) {
             showToastNow(getString(R.string.error_message_query_fail));
             return;
         }
@@ -166,7 +168,22 @@ public class MainActivity extends AppCompatActivity
 
     private void queryMoviesDb(MovieCategories movieCategories) {
         URL moviesQueryUrl = NetworkUtilities.buildUrl(movieCategories);
-        new MoviesQueryTask().execute(moviesQueryUrl);
+
+        if (!isConnectivityAvailable()) {
+            Log.d(LOG_TAG, getString(R.string.error_message_query_fail));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    showToastNow(getString(R.string.error_message_query_fail));
+                }
+            });
+            return;
+        }
+
+        try {
+            new MoviesQueryTask(this).execute(moviesQueryUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -189,9 +206,9 @@ public class MainActivity extends AppCompatActivity
     public void onCompleteMoviesQueryTask (String jsonData) {
         try {
             arrayListMovies = getJsonResults(jsonData);
-//            for(int i = 0; i< arrayListMovies.size(); i++) {
-//                Log.d(LOG_TAG, arrayListMovies.get(i).getTitle());
-//            }
+            for(int i = 0; i< arrayListMovies.size(); i++) {
+                Log.d(LOG_TAG, arrayListMovies.get(i).getTitle());
+            }
             movieAdapter.setMovieList(arrayListMovies);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -209,46 +226,17 @@ public class MainActivity extends AppCompatActivity
         return arrayListMovies;
     }
 
-    /*
-    UDACITY_REVIEW TODO
-    In order to make your codes reusable and structural, you can consider to refactor your codes
-    and put this class in a separate Java file.
-     */
-    public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBarQuery.setVisibility(View.VISIBLE);
-        }
-        @Override
-        protected String doInBackground(URL... urls) {
-            URL searchUrl = urls[0];
-            String moviesQueryResults = null;
-            if (isConnectivityAvailable()) {
-                try {
-                    moviesQueryResults = NetworkUtilities.getResponseFromHttpUrl(searchUrl);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.d(LOG_TAG, getString(R.string.error_message_query_fail));
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        showToastNow(getString(R.string.error_message_query_fail));
-                    }
-                });
-            }
-            return moviesQueryResults;
-        }
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
 
-            progressBarQuery.setVisibility(View.INVISIBLE);
+    @Override
+    public void onMoviesQueryTaskPreExecute() {
+        progressBarQuery.setVisibility(View.VISIBLE);
+    }
 
-            if (s != null && !s.equals("")) {
-                onCompleteMoviesQueryTask(s);
-            }
+    @Override
+    public void onMoviesQueryTaskPostExecute(String s) {
+        progressBarQuery.setVisibility(View.INVISIBLE);
+        if (s != null && !s.equals("")) {
+            onCompleteMoviesQueryTask(s);
         }
     }
 }
