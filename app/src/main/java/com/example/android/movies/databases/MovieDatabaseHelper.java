@@ -3,6 +3,7 @@ package com.example.android.movies.databases;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.android.movies.Constants;
 
@@ -40,6 +41,7 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
                 Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VIDEO + " TEXT, " +
                 Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VOTE_AVERAGE + " DOUBLE);";
 
+        Log.d(TAG, SQL_CREATE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
     }
 

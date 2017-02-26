@@ -33,10 +33,10 @@ public class MovieVideo {
         this.size = video.getInt("size");
 
         String videoType = video.getString("type");
-        if (videoType == "Trailer"
-                || videoType == "Teaser"
-                || videoType == "Clip"
-                || videoType == "Featurette") {
+        if (videoType.equals("Trailer")
+                || videoType.equals("Teaser")
+                || videoType.equals("Clip")
+                || videoType.equals("Featurette")) {
             //Allowed Values: Trailer, Teaser, Clip, Featurette
             this.type = video.getString("type");
         } else {
