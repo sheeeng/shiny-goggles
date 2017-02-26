@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+UDACITY_REVIEW
+Good job setting up your ScrollView for your activity_movie_details.xml file.
+By providing a mechanism to scroll your app up and down,
+your can help your users view all of the content even if there was too much information to be shown.
+Well done! :clap:
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_movie_details"

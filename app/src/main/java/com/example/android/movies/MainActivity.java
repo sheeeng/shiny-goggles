@@ -212,6 +212,11 @@ public class MainActivity extends AppCompatActivity
         return arrayListMovies;
     }
 
+    /*
+    UDACITY_REVIEW TODO
+    In order to make your codes reusable and structural, you can consider to refactor your codes
+    and put this class in a separate Java file.
+     */
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
         @Override
         protected void onPreExecute() {

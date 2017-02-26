@@ -204,6 +204,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
          * use that integer to display the appropriate text within a list item.
          * @param listIndex Position of the item in the list
          */
+        /*
+        UDACITY_REVIEW TODO
+        Here, to learn more, you can also try to use error and placeholder
+        in Glide here to avoid crashing down due to empty string values or null values.
+        Glide.with(context)
+            .load(url)
+            .placeholder(R.drawable.user_placeholder)
+            .error(R.drawable.user_placeholder_error)
+            .into(imageView);
+         */
         void bind(int listIndex) {
             Glide.with(context)
                     .load(Constants.URLS.TMDB_IMAGE_SIZE_W185 +

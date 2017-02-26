@@ -7,6 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*
+UDACITY_REVIEW
+Awesome job implementing Parcelable!
+By doing so, you can optimize your app to save dynamic data/state efficiently. Well done! :clap:
+*/
 public class Movie implements Parcelable {
 
     private static final String LOG_TAG = Movie.class.getSimpleName();

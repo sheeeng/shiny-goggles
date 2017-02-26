@@ -11,6 +11,14 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.example.android.movies"
+        /*
+        UDACITY_REVIEW
+        Yes great! You have your minSdkVersion value set to 15,
+        this implementation can make your app able to run on most of the Android devices (96%).
+        In the meantime, your app can gain a lot of latest powerful features from Android 4.X.
+        Great job here!
+        https://developer.android.com/about/dashboards/index.html
+         */
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1

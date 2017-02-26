@@ -32,6 +32,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+        /*
+        UDACITY_REVIEW TODO
+        Since from your codes, I can see that you are a really advanced student.
+        In order to learn more, you could also check a package called "butterknife".
+        In the future, you can find and automatically cast the corresponding view in your layout easily.
+        This will save you a lot of time. :smiley:
+        http://jakewharton.github.io/butterknife/
+        https://www.youtube.com/watch?v=1A4LY8gUEDs
+         */
         imageViewMoviePoster = (ImageView) findViewById(R.id.iv_item_details_movie_poster);
         imageViewMovieBackdrop = (ImageView) findViewById(R.id.iv_item_details_movie_backdrop);
         textViewMovieTitle = (TextView) findViewById(R.id.tv_item_details_movie_title);
