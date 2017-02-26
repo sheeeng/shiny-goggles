@@ -29,8 +29,9 @@ import butterknife.ButterKnife;
 
 public class MainActivityFragment
         extends Fragment
-        implements FetchMoviesTask.FetchMoviesTaskInterfaces,
-            FetchFavoriteMoviesTask.FetchFavoriteMoviesTaskInterfaces {
+        implements
+        FetchMoviesTask.FetchMoviesTaskInterfaces,
+        FetchFavoriteMoviesTask.FetchFavoriteMoviesTaskInterfaces {
     static final String TAG = MainActivityFragment.class.getSimpleName();
 
     @BindView(R.id.pb_query) ProgressBar progressBarQuery;

@@ -4,13 +4,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,23 +31,16 @@ import com.example.android.movies.models.MovieReview;
 import com.example.android.movies.models.MovieVideo;
 import com.linearlistview.LinearListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDetailsFragment
-        extends Fragment {
+        extends Fragment
+        implements
+        FetchTrailersTask.FetchTrailersTaskInterfaces,
+        FetchReviewsTask.FetchReviewsTaskInterfaces {
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
 
     static final String DETAIL_MOVIE = "MOVIE_DETAILS";
@@ -96,8 +89,8 @@ public class MovieDetailsFragment
             MenuItem action_share = menu.findItem(R.id.action_share);
 
             action_favorite.setIcon(Utilities.isFavorite(getActivity(), mMovie.getId()) == 1 ?
-                    R.drawable.ic_star_black_24dp :
-                    R.drawable.ic_star_border_black_24dp);
+                    R.drawable.ic_star_white_24dp :
+                    R.drawable.ic_star_border_white_24dp);
 
             new AsyncTask<Void, Void, Integer>() {
                 @Override
@@ -108,8 +101,8 @@ public class MovieDetailsFragment
                 @Override
                 protected void onPostExecute(Integer isFavorite) {
                     action_favorite.setIcon(isFavorite == 1 ?
-                            R.drawable.ic_star_black_24dp :
-                            R.drawable.ic_star_border_black_24dp);
+                            R.drawable.ic_star_white_24dp :
+                            R.drawable.ic_star_border_white_24dp);
                 }
             }.execute();
 
@@ -152,7 +145,7 @@ public class MovieDetailsFragment
 
                                     @Override
                                     protected void onPostExecute(Integer rowsDeleted) {
-                                        item.setIcon(R.drawable.ic_star_border_black_24dp);
+                                        item.setIcon(R.drawable.ic_star_border_white_24dp);
                                         if (mToast != null) {
                                             mToast.cancel();
                                         }
@@ -190,7 +183,7 @@ public class MovieDetailsFragment
 
                                     @Override
                                     protected void onPostExecute(Uri returnUri) {
-                                        item.setIcon(R.drawable.ic_star_black_24dp);
+                                        item.setIcon(R.drawable.ic_star_white_24dp);
                                         if (mToast != null) {
                                             mToast.cancel();
                                         }
@@ -292,235 +285,63 @@ public class MovieDetailsFragment
     public void onStart() {
         super.onStart();
         if (mMovie != null) {
-            new FetchTrailersTask().execute(Integer.toString(mMovie.getId()));
-            new FetchReviewsTask().execute(Integer.toString(mMovie.getId()));
+            new FetchTrailersTask(this).execute(Integer.toString(mMovie.getId()));
+            new FetchReviewsTask(this).execute(Integer.toString(mMovie.getId()));
         }
     }
+
 
     private Intent createShareMovieIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            // The `FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET` constant was deprecated in API level 21.
+            // https://developer.android.com/reference/android/content/Intent.html#FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+            // https://source.android.com/source/build-numbers.html
+            // https://medium.com/google-developers/picking-your-compilesdkversion-minsdkversion-targetsdkversion-a098a0341ebd
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        }
+
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.getTitle() + " " +
-                "http://www.youtube.com/watch?v=" + movieVideo.getKey());
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                "See `" + mMovie.getTitle() + "` you must!\n" +
+                "http://www.youtube.com/watch?v=" + movieVideo.getKey() );
         return shareIntent;
     }
 
-    public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>> {
 
-        private final String TAG = FetchTrailersTask.class.getSimpleName();
-
-        private List<MovieVideo> getTrailersDataFromJson(String jsonStr) throws JSONException {
-            JSONObject trailerJson = new JSONObject(jsonStr);
-            JSONArray trailerArray = trailerJson.getJSONArray("results");
-
-            List<MovieVideo> results = new ArrayList<>();
-
-            for(int i = 0; i < trailerArray.length(); i++) {
-                JSONObject trailer = trailerArray.getJSONObject(i);
-                // Only show Trailers which are on Youtube
-                if (trailer.getString("site").contentEquals("YouTube")) {
-                    MovieVideo trailerModel = new MovieVideo(trailer);
-                    results.add(trailerModel);
-                }
-            }
-
-            return results;
-        }
-
-        @Override
-        protected List<MovieVideo> doInBackground(String... params) {
-
-            if (params.length == 0) {
-                return null;
-            }
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String jsonStr = null;
-
-            try {
-                final String BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "/videos";
-                final String API_KEY_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(API_KEY_PARAM, BuildConfig.MOVIEDB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                jsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e(TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(TAG, "Error closing stream", e);
+    @Override
+    public void onFetchTrailersTaskPostExecute(List<MovieVideo> trailers) {
+        if (trailers != null) {
+            if (trailers.size() > 0) {
+                cardViewVideo.setVisibility(View.VISIBLE);
+                if (movieVideoAdapter != null) {
+                    movieVideoAdapter.clear();
+                    for (MovieVideo trailer : trailers) {
+                        movieVideoAdapter.add(trailer);
                     }
                 }
-            }
 
-            try {
-                return getTrailersDataFromJson(jsonStr);
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<MovieVideo> trailers) {
-            if (trailers != null) {
-                if (trailers.size() > 0) {
-                    cardViewVideo.setVisibility(View.VISIBLE);
-                    if (movieVideoAdapter != null) {
-                        movieVideoAdapter.clear();
-                        for (MovieVideo trailer : trailers) {
-                            movieVideoAdapter.add(trailer);
-                        }
-                    }
-
-                    movieVideo = trailers.get(0);
-                    if (mShareActionProvider != null) {
-                        mShareActionProvider.setShareIntent(createShareMovieIntent());
-                    }
+                movieVideo = trailers.get(0);
+                if (mShareActionProvider != null) {
+                    mShareActionProvider.setShareIntent(createShareMovieIntent());
                 }
             }
         }
     }
 
-    public class FetchReviewsTask extends AsyncTask<String, Void, List<MovieReview>> {
 
-        private final String TAG = FetchReviewsTask.class.getSimpleName();
-
-        private List<MovieReview> getReviewsDataFromJson(String jsonStr) throws JSONException {
-            JSONObject reviewJson = new JSONObject(jsonStr);
-            JSONArray reviewArray = reviewJson.getJSONArray("results");
-
-            List<MovieReview> results = new ArrayList<>();
-
-            for(int i = 0; i < reviewArray.length(); i++) {
-                JSONObject review = reviewArray.getJSONObject(i);
-                results.add(new MovieReview(review));
-            }
-
-            return results;
-        }
-
-        @Override
-        protected List<MovieReview> doInBackground(String... params) {
-
-            if (params.length == 0) {
-                return null;
-            }
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String jsonStr = null;
-
-            try {
-                final String BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "/reviews";
-                final String API_KEY_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(API_KEY_PARAM, BuildConfig.MOVIEDB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                jsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e(TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getReviewsDataFromJson(jsonStr);
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<MovieReview> reviews) {
-            if (reviews != null) {
-                if (reviews.size() > 0) {
-                    cardViewReview.setVisibility(View.VISIBLE);
-                    if (movieReviewAdapter != null) {
-                        movieReviewAdapter.clear();
-                        for (MovieReview review : reviews) {
-                            movieReviewAdapter.add(review);
-                        }
+    @Override
+    public void onFetchReviewsTaskPostExecute(List<MovieReview> reviews) {
+        if (reviews != null) {
+            if (reviews.size() > 0) {
+                cardViewReview.setVisibility(View.VISIBLE);
+                if (movieReviewAdapter != null) {
+                    movieReviewAdapter.clear();
+                    for (MovieReview review : reviews) {
+                        movieReviewAdapter.add(review);
                     }
                 }
             }
