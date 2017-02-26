@@ -1,6 +1,7 @@
 package com.example.android.movies.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +93,7 @@ public class MovieAdapter extends BaseAdapter {
                 .placeholder(R.drawable.ic_image_black_24dp)
                 .error(R.drawable.ic_crop_square_black_24dp)
                 .into(viewHolder.imageView);
+
         viewHolder.titleView.setText(movie.getTitle());
 
         return view;

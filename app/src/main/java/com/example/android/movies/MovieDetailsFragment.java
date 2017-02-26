@@ -275,7 +275,8 @@ public class MovieDetailsFragment
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 String date = DateUtils.formatDateTime(getActivity(),
-                        formatter.parse(movie_date).getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+                        formatter.parse(movie_date).getTime(),
+                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
                 mDateView.setText(date);
             } catch (ParseException e) {
                 e.printStackTrace();
