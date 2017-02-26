@@ -1,10 +1,11 @@
-package com.example.android.movies;
+package com.example.android.movies.tasks;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.android.movies.Constants;
 import com.example.android.movies.databases.MovieContract;
 import com.example.android.movies.models.Movie;
 

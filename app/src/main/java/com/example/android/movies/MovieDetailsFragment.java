@@ -29,6 +29,8 @@ import com.example.android.movies.databases.MovieContract;
 import com.example.android.movies.models.Movie;
 import com.example.android.movies.models.MovieReview;
 import com.example.android.movies.models.MovieVideo;
+import com.example.android.movies.tasks.FetchReviewsTask;
+import com.example.android.movies.tasks.FetchTrailersTask;
 import com.linearlistview.LinearListView;
 
 import java.text.ParseException;

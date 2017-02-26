@@ -1,11 +1,11 @@
-package com.example.android.movies;
+package com.example.android.movies.tasks;
 
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 
-import com.example.android.movies.models.MovieVideo;
+import com.example.android.movies.BuildConfig;
+import com.example.android.movies.models.MovieReview;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,40 +20,36 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>> {
+public class FetchReviewsTask extends AsyncTask<String, Void, List<MovieReview>> {
 
-    private final String TAG = FetchTrailersTask.class.getSimpleName();
+    private final String TAG = FetchReviewsTask.class.getSimpleName();
 
-    private FetchTrailersTaskInterfaces fetchTrailersTaskInterfacesListener;
+    private FetchReviewsTaskInterfaces fetchReviewsTaskInterfacesListener;
 
-    public interface FetchTrailersTaskInterfaces {
-        void onFetchTrailersTaskPostExecute(List<MovieVideo> trailers);
+    public interface FetchReviewsTaskInterfaces {
+        void onFetchReviewsTaskPostExecute(List<MovieReview> reviews);
     }
 
-    public FetchTrailersTask(FetchTrailersTaskInterfaces fetchTrailersTaskInterfacesListener) {
-        this.fetchTrailersTaskInterfacesListener = fetchTrailersTaskInterfacesListener;
+    public FetchReviewsTask(FetchReviewsTaskInterfaces fetchReviewsTaskInterfacesListener) {
+        this.fetchReviewsTaskInterfacesListener = fetchReviewsTaskInterfacesListener;
     }
 
-    private List<MovieVideo> getTrailersDataFromJson(String jsonStr) throws JSONException {
-        JSONObject trailerJson = new JSONObject(jsonStr);
-        JSONArray trailerArray = trailerJson.getJSONArray("results");
+    private List<MovieReview> getReviewsDataFromJson(String jsonStr) throws JSONException {
+        JSONObject reviewJson = new JSONObject(jsonStr);
+        JSONArray reviewArray = reviewJson.getJSONArray("results");
 
-        List<MovieVideo> results = new ArrayList<>();
+        List<MovieReview> results = new ArrayList<>();
 
-        for(int i = 0; i < trailerArray.length(); i++) {
-            JSONObject trailer = trailerArray.getJSONObject(i);
-            // Only show Trailers which are on Youtube
-            if (trailer.getString("site").contentEquals("YouTube")) {
-                MovieVideo trailerModel = new MovieVideo(trailer);
-                results.add(trailerModel);
-            }
+        for(int i = 0; i < reviewArray.length(); i++) {
+            JSONObject review = reviewArray.getJSONObject(i);
+            results.add(new MovieReview(review));
         }
 
         return results;
     }
 
     @Override
-    protected List<MovieVideo> doInBackground(String... params) {
+    protected List<MovieReview> doInBackground(String... params) {
 
         if (params.length == 0) {
             return null;
@@ -65,7 +61,7 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>>
         String jsonStr = null;
 
         try {
-            final String BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "/videos";
+            final String BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "/reviews";
             final String API_KEY_PARAM = "api_key";
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
@@ -114,7 +110,7 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>>
         }
 
         try {
-            return getTrailersDataFromJson(jsonStr);
+            return getReviewsDataFromJson(jsonStr);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -125,10 +121,10 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>>
     }
 
     @Override
-    protected void onPostExecute(List<MovieVideo> trailers) {
-        super.onPostExecute(trailers);
-        if (fetchTrailersTaskInterfacesListener != null) {
-            fetchTrailersTaskInterfacesListener.onFetchTrailersTaskPostExecute(trailers);
+    protected void onPostExecute(List<MovieReview> reviews) {
+        super.onPostExecute(reviews);
+        if (fetchReviewsTaskInterfacesListener != null) {
+            fetchReviewsTaskInterfacesListener.onFetchReviewsTaskPostExecute(reviews);
         }
     }
 }

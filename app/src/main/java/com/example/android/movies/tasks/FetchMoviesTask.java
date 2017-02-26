@@ -1,8 +1,10 @@
-package com.example.android.movies;
+package com.example.android.movies.tasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.android.movies.MovieCategories;
+import com.example.android.movies.NetworkUtilities;
 import com.example.android.movies.models.Movie;
 
 import org.json.JSONArray;

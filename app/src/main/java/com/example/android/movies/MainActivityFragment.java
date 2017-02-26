@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.example.android.movies.adapters.MovieAdapter;
 import com.example.android.movies.models.Movie;
+import com.example.android.movies.tasks.FetchFavoriteMoviesTask;
+import com.example.android.movies.tasks.FetchMoviesTask;
 
 import java.util.ArrayList;
 import java.util.List;
