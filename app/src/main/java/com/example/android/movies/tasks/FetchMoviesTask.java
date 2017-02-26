@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.movies.MovieCategories;
-import com.example.android.movies.NetworkUtilities;
+import com.example.android.movies.Utilities;
 import com.example.android.movies.models.Movie;
 
 import org.json.JSONArray;
@@ -62,18 +62,18 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             String categorySelected = params[0];
 
             if (categorySelected.contains("now_playing")) {
-                url = NetworkUtilities.buildUrl(MovieCategories.NOW_PLAYING);
+                url = Utilities.buildUrl(MovieCategories.NOW_PLAYING);
             } else if (categorySelected.contains("popular")) {
-                url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
+                url = Utilities.buildUrl(MovieCategories.POPULAR);
             } else if (categorySelected.contains("top_rated")) {
-                url = NetworkUtilities.buildUrl(MovieCategories.TOP_RATED);
+                url = Utilities.buildUrl(MovieCategories.TOP_RATED);
             } else if (categorySelected.contains("upcoming")) {
-                url = NetworkUtilities.buildUrl(MovieCategories.UPCOMING);
+                url = Utilities.buildUrl(MovieCategories.UPCOMING);
             } else {
-                url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
+                url = Utilities.buildUrl(MovieCategories.POPULAR);
             }
 
-            jsonStr = NetworkUtilities.getResponseFromHttpUrl(url);
+            jsonStr = Utilities.getResponseFromHttpUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
