@@ -1,8 +1,6 @@
 package com.example.android.movies;
 
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.View;
 
 import java.net.URL;
 
@@ -11,26 +9,26 @@ UDACITY_REVIEW
 In order to make your codes reusable and structural, you can consider to refactor your codes
 and put this class in a separate Java file.
  */
-public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
+public class MovieQueryTask extends AsyncTask<URL, Void, String> {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private MoviesQueryTaskInterfaces moviesQueryTaskInterfacesListener;
+    private MovieQueryTaskInterfaces movieQueryTaskInterfacesListener;
 
-    public interface MoviesQueryTaskInterfaces{
-        void onMoviesQueryTaskPreExecute();
-        void onMoviesQueryTaskPostExecute(String s);
+    public interface MovieQueryTaskInterfaces {
+        void onMovieQueryTaskPreExecute();
+        void onMovieQueryTaskPostExecute(String s);
     }
 
-    public MoviesQueryTask(MoviesQueryTaskInterfaces interfacesListener) {
-        this.moviesQueryTaskInterfacesListener = interfacesListener;
+    public MovieQueryTask(MovieQueryTaskInterfaces interfacesListener) {
+        this.movieQueryTaskInterfacesListener = interfacesListener;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (moviesQueryTaskInterfacesListener != null) {
-            moviesQueryTaskInterfacesListener.onMoviesQueryTaskPreExecute();
+        if (movieQueryTaskInterfacesListener != null) {
+            movieQueryTaskInterfacesListener.onMovieQueryTaskPreExecute();
         }
     }
 
@@ -51,8 +49,8 @@ public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (moviesQueryTaskInterfacesListener != null) {
-            moviesQueryTaskInterfacesListener.onMoviesQueryTaskPostExecute(s);
+        if (movieQueryTaskInterfacesListener != null) {
+            movieQueryTaskInterfacesListener.onMovieQueryTaskPostExecute(s);
         }
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.view.MenuItemCompat;
@@ -36,7 +35,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
     implements
         MovieAdapter.ItemClickListener,
-        MoviesQueryTask.MoviesQueryTaskInterfaces{
+        MovieQueryTask.MovieQueryTaskInterfaces {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -180,7 +179,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         try {
-            new MoviesQueryTask(this).execute(moviesQueryUrl);
+            new MovieQueryTask(this).execute(moviesQueryUrl);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,12 +227,12 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onMoviesQueryTaskPreExecute() {
+    public void onMovieQueryTaskPreExecute() {
         progressBarQuery.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onMoviesQueryTaskPostExecute(String s) {
+    public void onMovieQueryTaskPostExecute(String s) {
         progressBarQuery.setVisibility(View.INVISIBLE);
         if (s != null && !s.equals("")) {
             onCompleteMoviesQueryTask(s);
