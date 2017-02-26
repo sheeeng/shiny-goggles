@@ -2,6 +2,7 @@ package com.example.android.movies;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -62,7 +63,6 @@ public class MainActivityFragment
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-        ButterKnife.bind(this.getActivity());
     }
 
 
@@ -76,9 +76,10 @@ public class MainActivityFragment
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this.getActivity(),
+                getContext(),
                 R.array.movie_categories,
                 android.R.layout.simple_spinner_item);
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(spinnerOnItemSelectedListener);
@@ -87,6 +88,9 @@ public class MainActivityFragment
     private AdapterView.OnItemSelectedListener spinnerOnItemSelectedListener =
             new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    Log.d(TAG, parent.getClass().getName());
+                    Log.d(TAG, view.getClass().getName());
+
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
 
                     String selectedCategory = parent.getItemAtPosition(pos).toString();
@@ -136,8 +140,14 @@ public class MainActivityFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_main, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.bind(this, view);
 
         gridView = (GridView) view.findViewById(R.id.movie_gridview);
 
@@ -167,8 +177,6 @@ public class MainActivityFragment
         } else {
             updateMovies(sortOption);
         }
-
-        return view;
     }
 
     private void updateMovies(String sort_by) {

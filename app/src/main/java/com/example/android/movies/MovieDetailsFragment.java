@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
@@ -206,15 +207,19 @@ public class MovieDetailsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         Bundle arguments = getArguments();
         if (arguments != null) {
             mMovie = arguments.getParcelable(MovieDetailsFragment.DETAIL_MOVIE);
         }
 
-        View rootView = inflater.inflate(R.layout.fragment_details, container, false);
+        return inflater.inflate(R.layout.fragment_details, container, false);
+    }
 
-        mDetailLayout = (ScrollView) rootView.findViewById(R.id.movie_details_layout);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mDetailLayout = (ScrollView) view.findViewById(R.id.movie_details_layout);
 
         if (mMovie != null) {
             mDetailLayout.setVisibility(View.VISIBLE);
@@ -222,18 +227,18 @@ public class MovieDetailsFragment
             mDetailLayout.setVisibility(View.INVISIBLE);
         }
 
-        mImageView = (ImageView) rootView.findViewById(R.id.detail_image);
+        mImageView = (ImageView) view.findViewById(R.id.detail_image);
 
-        mTitleView = (TextView) rootView.findViewById(R.id.detail_title);
-        mOverviewView = (TextView) rootView.findViewById(R.id.detail_overview);
-        mDateView = (TextView) rootView.findViewById(R.id.detail_date);
-        mVoteAverageView = (TextView) rootView.findViewById(R.id.detail_vote_average);
+        mTitleView = (TextView) view.findViewById(R.id.detail_title);
+        mOverviewView = (TextView) view.findViewById(R.id.detail_overview);
+        mDateView = (TextView) view.findViewById(R.id.detail_date);
+        mVoteAverageView = (TextView) view.findViewById(R.id.detail_vote_average);
 
-        mTrailersView = (LinearListView) rootView.findViewById(R.id.detail_trailers);
-        mReviewsView = (LinearListView) rootView.findViewById(R.id.detail_reviews);
+        mTrailersView = (LinearListView) view.findViewById(R.id.detail_trailers);
+        mReviewsView = (LinearListView) view.findViewById(R.id.detail_reviews);
 
-        cardViewReview = (CardView) rootView.findViewById(R.id.detail_reviews_cardview);
-        cardViewVideo = (CardView) rootView.findViewById(R.id.detail_trailers_cardview);
+        cardViewReview = (CardView) view.findViewById(R.id.detail_reviews_cardview);
+        cardViewVideo = (CardView) view.findViewById(R.id.detail_trailers_cardview);
 
         movieVideoAdapter = new MovieVideoAdapter(getActivity(), new ArrayList<MovieVideo>());
         mTrailersView.setAdapter(movieVideoAdapter);
@@ -279,8 +284,6 @@ public class MovieDetailsFragment
 
             mVoteAverageView.setText(Double.toString(mMovie.getVoteAverage()));
         }
-
-        return rootView;
     }
 
     @Override
