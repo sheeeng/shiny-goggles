@@ -205,7 +205,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
          * @param listIndex Position of the item in the list
          */
         /*
-        UDACITY_REVIEW TODO
+        UDACITY_REVIEW
         Here, to learn more, you can also try to use error and placeholder
         in Glide here to avoid crashing down due to empty string values or null values.
         Glide.with(context)
@@ -218,6 +218,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Glide.with(context)
                     .load(Constants.URLS.TMDB_IMAGE_SIZE_W185 +
                             listMovies.get(listIndex).getPosterPath())
+                    .placeholder(R.drawable.ic_image_black_24dp)
+                    .error(R.drawable.ic_broken_image_black_24dp)
                     .into(imageViewMoviePoster);
         }
 
