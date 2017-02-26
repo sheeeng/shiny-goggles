@@ -46,7 +46,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieDetailsFragment extends Fragment {
+public class MovieDetailsFragment
+        extends Fragment {
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
 
     static final String DETAIL_MOVIE = "MOVIE_DETAILS";
@@ -94,19 +95,19 @@ public class MovieDetailsFragment extends Fragment {
             final MenuItem action_favorite = menu.findItem(R.id.action_favorite);
             MenuItem action_share = menu.findItem(R.id.action_share);
 
-            action_favorite.setIcon(Utilities.isFavorited(getActivity(), mMovie.getId()) == 1 ?
+            action_favorite.setIcon(Utilities.isFavorite(getActivity(), mMovie.getId()) == 1 ?
                     R.drawable.ic_star_black_24dp :
                     R.drawable.ic_star_border_black_24dp);
 
             new AsyncTask<Void, Void, Integer>() {
                 @Override
                 protected Integer doInBackground(Void... params) {
-                    return Utilities.isFavorited(getActivity(), mMovie.getId());
+                    return Utilities.isFavorite(getActivity(), mMovie.getId());
                 }
 
                 @Override
-                protected void onPostExecute(Integer isFavorited) {
-                    action_favorite.setIcon(isFavorited == 1 ?
+                protected void onPostExecute(Integer isFavorite) {
+                    action_favorite.setIcon(isFavorite == 1 ?
                             R.drawable.ic_star_black_24dp :
                             R.drawable.ic_star_border_black_24dp);
                 }
@@ -131,7 +132,7 @@ public class MovieDetailsFragment extends Fragment {
 
                         @Override
                         protected Integer doInBackground(Void... params) {
-                            return Utilities.isFavorited(getActivity(), mMovie.getId());
+                            return Utilities.isFavorite(getActivity(), mMovie.getId());
                         }
 
                         @Override

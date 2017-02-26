@@ -17,10 +17,10 @@
         android:padding="@dimen/grid_item_movie_spacing"
         android:verticalSpacing="@dimen/grid_item_movie_spacing" />
 
-    <!--<ProgressBar-->
-        <!--android:id="@+id/pb_query"-->
-        <!--android:layout_width="42dp"-->
-        <!--android:layout_height="42dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:visibility="invisible" />-->
+    <ProgressBar
+        android:id="@+id/pb_query"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
 </FrameLayout>

@@ -14,6 +14,24 @@ public class Constants {
         String TMDB_IMAGE_SIZE_ORIGINAL = "http://image.tmdb.org/t/p/orginal/";
     }
 
+    public static final String[] MOVIE_COLUMNS = {
+            com.example.android.movies.databases.MovieContract.MovieEntry._ID,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_POSTER_PATH,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ADULT,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_OVERVIEW,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_RELEASE_DATE,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_GENRE_IDS,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_TMDB_ID,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ORIGINAL_TITLE,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ORIGINAL_LANGUAGE,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_TITLE,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_BACKDROP_PATH,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_POPULARITY,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VOTE_COUNT,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VIDEO,
+            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VOTE_AVERAGE
+    };
+
     // No need to use "static final" attributes because this is an interface an not a class.
     public interface MOVIE_DATABASE_COLUMNS {
         int COL_ID = 0;

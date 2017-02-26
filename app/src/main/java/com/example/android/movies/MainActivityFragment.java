@@ -1,8 +1,5 @@
 package com.example.android.movies;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,27 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.example.android.movies.adapters.MovieAdapter;
-import com.example.android.movies.databases.MovieContract;
 import com.example.android.movies.models.Movie;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivityFragment extends Fragment {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class MainActivityFragment
+        extends Fragment
+        implements FetchMoviesTask.FetchMoviesTaskInterfaces,
+            FetchFavoriteMoviesTask.FetchFavoriteMoviesTaskInterfaces {
     static final String TAG = MainActivityFragment.class.getSimpleName();
 
+    @BindView(R.id.pb_query) ProgressBar progressBarQuery;
     private GridView gridView;
     private MovieAdapter movieAdapter;
 
@@ -51,24 +45,6 @@ public class MainActivityFragment extends Fragment {
     private String mSortBy = POPULAR_DESC;
 
     private ArrayList<Movie> mMovies = null;
-
-    private static final String[] MOVIE_COLUMNS = {
-            MovieContract.MovieEntry._ID,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_POSTER_PATH,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ADULT,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_OVERVIEW,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_RELEASE_DATE,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_GENRE_IDS,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_TMDB_ID,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ORIGINAL_TITLE,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_ORIGINAL_LANGUAGE,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_TITLE,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_BACKDROP_PATH,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_POPULARITY,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VOTE_COUNT,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VIDEO,
-            Constants.MOVIE_DATABASE_COLUMN_NAMES.COL_VOTE_AVERAGE
-    };
 
     public MainActivityFragment() {
     }
@@ -87,6 +63,7 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        ButterKnife.bind(this.getActivity());
     }
 
     @Override
@@ -227,9 +204,9 @@ public class MainActivityFragment extends Fragment {
 
     private void updateMovies(String sort_by) {
         if (sort_by.contentEquals(FAVORITE)) {
-            new FetchFavoriteMoviesTask(getActivity()).execute();
+            new FetchFavoriteMoviesTask(getActivity(), this).execute();
         } else {
-            new FetchMoviesTask().execute(sort_by);
+            new FetchMoviesTask(this).execute(sort_by);
         }
     }
 
@@ -245,162 +222,51 @@ public class MainActivityFragment extends Fragment {
     }
 
 
+    @Override
+    public void onFetchMoviesTaskPreExecute() {
+        if (progressBarQuery != null) {
+            progressBarQuery.setVisibility(View.VISIBLE);
+        }
+    }
 
-
-
-    public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
-
-        private final String TAG = FetchMoviesTask.class.getSimpleName();
-
-        private List<Movie> getMoviesDataFromJson(String jsonStr) throws JSONException {
-            JSONObject movieJson = new JSONObject(jsonStr);
-            JSONArray movieArray = movieJson.getJSONArray("results");
-
-            List<Movie> results = new ArrayList<>();
-
-            for(int i = 0; i < movieArray.length(); i++) {
-                JSONObject movie = movieArray.getJSONObject(i);
-                Movie movieModel = new Movie(movie);
-                results.add(movieModel);
-            }
-
-            return results;
+    @Override
+    public void onFetchMoviesTaskPostExecute(List<Movie> movies) {
+        if (progressBarQuery != null) {
+            progressBarQuery.setVisibility(View.INVISIBLE);
         }
 
-        @Override
-        protected List<Movie> doInBackground(String... params) {
-
-            if (params.length == 0) {
-                return null;
+        if (movies != null) {
+            if (movieAdapter != null) {
+                movieAdapter.setData(movies);
             }
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String jsonStr = null;
-
-            try {
-                URL url;
-                String categorySelected = params[0];
-                if (categorySelected.contains("now_playing")) {
-                    url = NetworkUtilities.buildUrl(MovieCategories.NOW_PLAYING);
-                } else if (categorySelected.contains("popular")) {
-                    url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
-                } else if (categorySelected.contains("top_rated")) {
-                    url = NetworkUtilities.buildUrl(MovieCategories.TOP_RATED);
-                } else if (categorySelected.contains("upcoming")) {
-                    url = NetworkUtilities.buildUrl(MovieCategories.UPCOMING);
-                } else {
-                    url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
-                }
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                jsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e(TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getMoviesDataFromJson(jsonStr);
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            if (movies != null) {
-                if (movieAdapter != null) {
-                    movieAdapter.setData(movies);
-                }
-                mMovies = new ArrayList<>();
-                mMovies.addAll(movies);
-            }
+            mMovies = new ArrayList<>();
+            mMovies.addAll(movies);
         }
     }
 
 
-
-
-
-    public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
-
-        private Context mContext;
-
-        public FetchFavoriteMoviesTask(Context context) {
-            mContext = context;
-        }
-
-        private List<Movie> getFavoriteMoviesDataFromCursor(Cursor cursor) {
-            List<Movie> results = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Movie movie = new Movie(cursor);
-                    results.add(movie);
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-            return results;
-        }
-
-        @Override
-        protected List<Movie> doInBackground(Void... params) {
-            Cursor cursor = mContext.getContentResolver().query(
-                    MovieContract.MovieEntry.CONTENT_URI,  //uri
-                    MOVIE_COLUMNS,  // projection
-                    null,  // selection
-                    null,  // selectionArgs
-                    null  // sortOrder
-            );
-            return getFavoriteMoviesDataFromCursor(cursor);
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            if (movies != null) {
-                if (movieAdapter != null) {
-                    movieAdapter.setData(movies);
-                }
-                mMovies = new ArrayList<>();
-                mMovies.addAll(movies);
-            }
+    @Override
+    public void onFetchFavoriteMoviesTaskPreExecute() {
+        if (progressBarQuery != null) {
+            progressBarQuery.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onFetchFavoriteMoviesTaskPostExecute(List<Movie> movies) {
+        if (progressBarQuery != null) {
+            progressBarQuery.setVisibility(View.INVISIBLE);
+        }
+
+        if (movies != null) {
+            if (movieAdapter != null) {
+                movieAdapter.setData(movies);
+            }
+            mMovies = new ArrayList<>();
+            mMovies.addAll(movies);
+        }
+    }
+
+
 }
+
