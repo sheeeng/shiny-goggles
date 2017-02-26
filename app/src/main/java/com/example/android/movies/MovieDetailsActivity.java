@@ -14,16 +14,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
 
-    private ImageView imageViewMoviePoster;
-    private ImageView imageViewMovieBackdrop;
-    private TextView textViewMovieTitle;
-    private TextView textViewMovieReleaseDate;
-    private TextView textViewMovieVoteAverage;
-    private TextView textViewMovieOverview;
+    @BindView(R.id.iv_item_details_movie_poster) ImageView imageViewMoviePoster;
+    @BindView(R.id.iv_item_details_movie_backdrop) ImageView imageViewMovieBackdrop;
+    @BindView(R.id.tv_item_details_movie_title) TextView textViewMovieTitle;
+    @BindView(R.id.tv_item_details_movie_release_date) TextView textViewMovieReleaseDate;
+    @BindView(R.id.tv_item_details_movie_vote_average) TextView textViewMovieVoteAverage;
+    @BindView(R.id.tv_item_details_movie_overview) TextView textViewMovieOverview;
 
     private Movie movie;
 
@@ -33,7 +36,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
 
         /*
-        UDACITY_REVIEW TODO
+        UDACITY_REVIEW
         Since from your codes, I can see that you are a really advanced student.
         In order to learn more, you could also check a package called "butterknife".
         In the future, you can find and automatically cast the corresponding view in your layout easily.
@@ -41,12 +44,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         http://jakewharton.github.io/butterknife/
         https://www.youtube.com/watch?v=1A4LY8gUEDs
          */
-        imageViewMoviePoster = (ImageView) findViewById(R.id.iv_item_details_movie_poster);
-        imageViewMovieBackdrop = (ImageView) findViewById(R.id.iv_item_details_movie_backdrop);
-        textViewMovieTitle = (TextView) findViewById(R.id.tv_item_details_movie_title);
-        textViewMovieReleaseDate = (TextView) findViewById(R.id.tv_item_details_movie_release_date);
-        textViewMovieVoteAverage = (TextView) findViewById(R.id.tv_item_details_movie_vote_average);
-        textViewMovieOverview = (TextView) findViewById(R.id.tv_item_details_movie_overview);
+        ButterKnife.bind(this);
 
         Intent intentSource = getIntent();
 

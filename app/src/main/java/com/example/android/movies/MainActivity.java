@@ -30,22 +30,27 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity
     implements MovieAdapter.ItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    @BindView(R.id.pb_query) ProgressBar progressBarQuery;
+    @BindView(R.id.rv_movies) RecyclerView recyclerViewMovies;
+
     private ArrayList<Movie> arrayListMovies;
-    Spinner spinner;
-    private ProgressBar progressBarQuery;
+    private Spinner spinner;
     private Toast toast;
     private MovieAdapter movieAdapter;
-    private RecyclerView recyclerViewMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         if (savedInstanceState == null ||
                 !savedInstanceState.containsKey(
@@ -57,14 +62,6 @@ public class MainActivity extends AppCompatActivity
             arrayListMovies = savedInstanceState.getParcelableArrayList(
                     getString(R.string.saved_instance_name));
         }
-
-        progressBarQuery = (ProgressBar) findViewById(R.id.pb_query);
-
-        /*
-         * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
-         * do things like set the adapter of the RecyclerView and toggle the visibility.
-         */
-        recyclerViewMovies = (RecyclerView) findViewById(R.id.rv_movies);
 
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
