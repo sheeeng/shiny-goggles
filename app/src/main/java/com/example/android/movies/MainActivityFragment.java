@@ -1,7 +1,9 @@
 package com.example.android.movies;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,8 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.android.movies.adapters.MovieAdapter;
 import com.example.android.movies.models.Movie;
@@ -32,21 +37,12 @@ public class MainActivityFragment
     private GridView gridView;
     private MovieAdapter movieAdapter;
 
-    private static final String SORT_SETTING_KEY = "sort_setting";
-
-    private static final String NOW_PLAYING_DESC = "now_playing.desc";
-    private static final String POPULAR_DESC = "popularity.desc";
-    private static final String TOP_RATED_DESC = "top_rated.desc";
-    private static final String UPCOMING_DESC = "upcoming.desc";
-
-    private static final String FAVORITE = "favorite";
-    private static final String MOVIES_KEY = "movies";
-
-    private String mSortBy = POPULAR_DESC;
+    private String sortOption = "now_playing";
 
     private ArrayList<Movie> mMovies = null;
 
     public MainActivityFragment() {
+
     }
 
     /**
@@ -66,103 +62,73 @@ public class MainActivityFragment
         ButterKnife.bind(this.getActivity());
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
         inflater.inflate(R.menu.menu_fragment_main, menu);
 
-        MenuItem action_sort_by_now_playing = menu.findItem(R.id.action_sort_by_now_playing);
-        MenuItem action_sort_by_popular = menu.findItem(R.id.action_sort_by_popular);
-        MenuItem action_sort_by_top_rated = menu.findItem(R.id.action_sort_by_top_rated);
-        MenuItem action_sort_by_upcoming = menu.findItem(R.id.action_sort_by_upcoming);
+        MenuItem menuItem = menu.findItem(R.id.s_movie_categories);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
 
-        MenuItem action_sort_by_favorite = menu.findItem(R.id.action_sort_by_favorite);
-
-        switch (mSortBy) {
-            case NOW_PLAYING_DESC:
-                if (!action_sort_by_now_playing.isChecked()) {
-                    action_sort_by_now_playing.setChecked(true);
-                }
-                break;
-            case POPULAR_DESC:
-                if (!action_sort_by_popular.isChecked()) {
-                    action_sort_by_popular.setChecked(true);
-                }
-                break;
-            case TOP_RATED_DESC:
-                if (!action_sort_by_top_rated.isChecked()) {
-                    action_sort_by_top_rated.setChecked(true);
-                }
-                break;
-            case UPCOMING_DESC:
-                if (!action_sort_by_upcoming.isChecked()) {
-                    action_sort_by_upcoming.setChecked(true);
-                }
-                break;
-            case FAVORITE:
-                if (!action_sort_by_favorite.isChecked()) {
-                    action_sort_by_favorite.setChecked(true);
-                }
-                break;
-            default:
-                Log.d(TAG, "Unknown sort option.");
-                super.onCreateOptionsMenu(menu, inflater);
-                break;
-        }
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this.getActivity(),
+                R.array.movie_categories,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(spinnerOnItemSelectedListener);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_sort_by_now_playing:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
+    private AdapterView.OnItemSelectedListener spinnerOnItemSelectedListener =
+            new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+
+                    String selectedCategory = parent.getItemAtPosition(pos).toString();
+                    Log.d(TAG, selectedCategory);
+
+                    String selectedValue = getResources().getStringArray(
+                            R.array.movie_categories_values)[parent.getSelectedItemPosition()];
+                    Log.d(TAG, selectedValue);
+
+                    Log.d(TAG, "Spinner: " + String.valueOf(parent.getSelectedItemPosition()));
+
+                    switch (parent.getSelectedItemPosition()) {
+                        case 0:
+                            sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
+                            updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
+                            break;
+                        case 1:
+                            sortOption = MovieCategories.POPULAR.toString().toLowerCase();
+                            updateMovies(MovieCategories.POPULAR.toString().toLowerCase());
+                            break;
+                        case 2:
+                            sortOption = MovieCategories.TOP_RATED.toString().toLowerCase();
+                            updateMovies(MovieCategories.TOP_RATED.toString().toLowerCase());
+                            break;
+                        case 3:
+                            sortOption = MovieCategories.UPCOMING.toString().toLowerCase();
+                            updateMovies(MovieCategories.UPCOMING.toString().toLowerCase());
+                            break;
+                        case 4:
+                            sortOption = MovieCategories.FAVORITES.toString().toLowerCase();
+                            updateMovies(MovieCategories.FAVORITES.toString().toLowerCase());
+                            break;
+
+                        default:
+                            Log.w(TAG, "Unknown option.");
+                            sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
+                            updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
+                            break;
+                    }
                 }
-                mSortBy = NOW_PLAYING_DESC;
-                updateMovies(mSortBy);
-                return true;
-            case R.id.action_sort_by_popular:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
+
+                public void onNothingSelected(AdapterView parent) {
+                    // Do nothing.
                 }
-                mSortBy = POPULAR_DESC;
-                updateMovies(mSortBy);
-                return true;
-            case R.id.action_sort_by_top_rated:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
-                mSortBy = TOP_RATED_DESC;
-                updateMovies(mSortBy);
-                return true;
-            case R.id.action_sort_by_upcoming:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
-                mSortBy = UPCOMING_DESC;
-                updateMovies(mSortBy);
-                return true;
-            case R.id.action_sort_by_favorite:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                }
-                mSortBy = FAVORITE;
-                updateMovies(mSortBy);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+            };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -185,25 +151,25 @@ public class MainActivityFragment
         });
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(SORT_SETTING_KEY)) {
-                mSortBy = savedInstanceState.getString(SORT_SETTING_KEY);
+            if (savedInstanceState.containsKey("sort_setting")) {
+                sortOption = savedInstanceState.getString("sort_setting");
             }
 
-            if (savedInstanceState.containsKey(MOVIES_KEY)) {
-                mMovies = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
+            if (savedInstanceState.containsKey("movies")) {
+                mMovies = savedInstanceState.getParcelableArrayList("movies");
                 movieAdapter.setData(mMovies);
             } else {
-                updateMovies(mSortBy);
+                updateMovies(sortOption);
             }
         } else {
-            updateMovies(mSortBy);
+            updateMovies(sortOption);
         }
 
         return view;
     }
 
     private void updateMovies(String sort_by) {
-        if (sort_by.contentEquals(FAVORITE)) {
+        if (sort_by.contentEquals("favorites")) {
             new FetchFavoriteMoviesTask(getActivity(), this).execute();
         } else {
             new FetchMoviesTask(this).execute(sort_by);
@@ -212,11 +178,11 @@ public class MainActivityFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (!mSortBy.contentEquals(POPULAR_DESC)) {
-            outState.putString(SORT_SETTING_KEY, mSortBy);
+        if (!sortOption.contentEquals("popular")) {
+            outState.putString("sort_setting", sortOption);
         }
         if (mMovies != null) {
-            outState.putParcelableArrayList(MOVIES_KEY, mMovies);
+            outState.putParcelableArrayList("movies", mMovies);
         }
         super.onSaveInstanceState(outState);
     }
@@ -224,6 +190,7 @@ public class MainActivityFragment
 
     @Override
     public void onFetchMoviesTaskPreExecute() {
+        Log.d(TAG, "onFetchMoviesTaskPreExecute() completed.");
         if (progressBarQuery != null) {
             progressBarQuery.setVisibility(View.VISIBLE);
         }
@@ -231,6 +198,7 @@ public class MainActivityFragment
 
     @Override
     public void onFetchMoviesTaskPostExecute(List<Movie> movies) {
+        Log.d(TAG, "onFetchMoviesTaskPostExecute() completed.");
         if (progressBarQuery != null) {
             progressBarQuery.setVisibility(View.INVISIBLE);
         }
@@ -247,6 +215,7 @@ public class MainActivityFragment
 
     @Override
     public void onFetchFavoriteMoviesTaskPreExecute() {
+        Log.d(TAG, "onFetchFavoriteMoviesTaskPreExecute() completed.");
         if (progressBarQuery != null) {
             progressBarQuery.setVisibility(View.VISIBLE);
         }
@@ -254,6 +223,7 @@ public class MainActivityFragment
 
     @Override
     public void onFetchFavoriteMoviesTaskPostExecute(List<Movie> movies) {
+        Log.d(TAG, "onFetchFavoriteMoviesTaskPostExecute() completed.");
         if (progressBarQuery != null) {
             progressBarQuery.setVisibility(View.INVISIBLE);
         }
@@ -266,7 +236,5 @@ public class MainActivityFragment
             mMovies.addAll(movies);
         }
     }
-
-
 }
 
