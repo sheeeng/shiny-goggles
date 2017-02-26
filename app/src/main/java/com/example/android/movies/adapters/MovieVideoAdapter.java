@@ -15,6 +15,7 @@ import com.example.android.movies.models.MovieVideo;
 import java.util.List;
 
 public class MovieVideoAdapter  extends BaseAdapter {
+    private static final String TAG = MovieVideoAdapter.class.getSimpleName();
 
     private final Context mContext;
     private final LayoutInflater mInflater;

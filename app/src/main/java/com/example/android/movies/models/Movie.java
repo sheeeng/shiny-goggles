@@ -3,7 +3,6 @@ package com.example.android.movies.models;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.example.android.movies.Constants;
 
@@ -25,7 +24,6 @@ By doing so, you can optimize your app to save dynamic data/state efficiently. W
  */
 
 public class Movie implements Parcelable {
-
     private static final String TAG = Movie.class.getSimpleName();
 
     private String poster_path;
@@ -48,7 +46,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(JSONObject movie) throws JSONException {
-        Log.d(TAG, movie.toString());
+        //Log.d(TAG, movie.toString());
 
         this.poster_path = movie.getString("poster_path");
         this.adult = movie.getBoolean("adult");

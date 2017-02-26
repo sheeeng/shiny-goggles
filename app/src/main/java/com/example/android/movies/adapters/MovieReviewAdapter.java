@@ -14,6 +14,7 @@ import com.example.android.movies.models.MovieReview;
 import java.util.List;
 
 public class MovieReviewAdapter extends BaseAdapter {
+    private static final String TAG = MovieReviewAdapter.class.getSimpleName();
 
     private final Context mContext;
     private final LayoutInflater mInflater;

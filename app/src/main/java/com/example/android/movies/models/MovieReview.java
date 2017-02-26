@@ -8,6 +8,8 @@ import org.json.JSONObject;
  */
 
 public class MovieReview {
+    private static final String TAG = MovieReview.class.getSimpleName();
+
     private String id;
     private String author;
     private String content;

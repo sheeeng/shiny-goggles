@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDetailsFragment extends Fragment {
-
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
 
     static final String DETAIL_MOVIE = "MOVIE_DETAILS";
@@ -307,7 +306,7 @@ public class MovieDetailsFragment extends Fragment {
 
     public class FetchTrailersTask extends AsyncTask<String, Void, List<MovieVideo>> {
 
-        private final String LOG_TAG = FetchTrailersTask.class.getSimpleName();
+        private final String TAG = FetchTrailersTask.class.getSimpleName();
 
         private List<MovieVideo> getTrailersDataFromJson(String jsonStr) throws JSONException {
             JSONObject trailerJson = new JSONObject(jsonStr);
@@ -373,7 +372,7 @@ public class MovieDetailsFragment extends Fragment {
                 }
                 jsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
+                Log.e(TAG, "Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -383,7 +382,7 @@ public class MovieDetailsFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
+                        Log.e(TAG, "Error closing stream", e);
                     }
                 }
             }
@@ -391,7 +390,7 @@ public class MovieDetailsFragment extends Fragment {
             try {
                 return getTrailersDataFromJson(jsonStr);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
@@ -422,7 +421,7 @@ public class MovieDetailsFragment extends Fragment {
 
     public class FetchReviewsTask extends AsyncTask<String, Void, List<MovieReview>> {
 
-        private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
+        private final String TAG = FetchReviewsTask.class.getSimpleName();
 
         private List<MovieReview> getReviewsDataFromJson(String jsonStr) throws JSONException {
             JSONObject reviewJson = new JSONObject(jsonStr);
@@ -484,7 +483,7 @@ public class MovieDetailsFragment extends Fragment {
                 }
                 jsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
+                Log.e(TAG, "Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -494,7 +493,7 @@ public class MovieDetailsFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
+                        Log.e(TAG, "Error closing stream", e);
                     }
                 }
             }
@@ -502,7 +501,7 @@ public class MovieDetailsFragment extends Fragment {
             try {
                 return getReviewsDataFromJson(jsonStr);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 

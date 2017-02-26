@@ -2,7 +2,6 @@ package com.example.android.movies;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,15 +33,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivityFragment extends Fragment {
-    static final String TAG = NetworkUtilities.class.getSimpleName();
+    static final String TAG = MainActivityFragment.class.getSimpleName();
 
     private GridView gridView;
     private MovieAdapter movieAdapter;
 
     private static final String SORT_SETTING_KEY = "sort_setting";
 
+    private static final String NOW_PLAYING_DESC = "now_playing.desc";
     private static final String POPULAR_DESC = "popularity.desc";
-    private static final String TOP_RATED_DESC = "vote_average.desc";
+    private static final String TOP_RATED_DESC = "top_rated.desc";
+    private static final String UPCOMING_DESC = "upcoming.desc";
 
     private static final String FAVORITE = "favorite";
     private static final String MOVIES_KEY = "movies";
@@ -92,11 +93,19 @@ public class MainActivityFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_fragment_main, menu);
 
+        MenuItem action_sort_by_now_playing = menu.findItem(R.id.action_sort_by_now_playing);
         MenuItem action_sort_by_popular = menu.findItem(R.id.action_sort_by_popular);
         MenuItem action_sort_by_top_rated = menu.findItem(R.id.action_sort_by_top_rated);
+        MenuItem action_sort_by_upcoming = menu.findItem(R.id.action_sort_by_upcoming);
+
         MenuItem action_sort_by_favorite = menu.findItem(R.id.action_sort_by_favorite);
 
         switch (mSortBy) {
+            case NOW_PLAYING_DESC:
+                if (!action_sort_by_now_playing.isChecked()) {
+                    action_sort_by_now_playing.setChecked(true);
+                }
+                break;
             case POPULAR_DESC:
                 if (!action_sort_by_popular.isChecked()) {
                     action_sort_by_popular.setChecked(true);
@@ -105,6 +114,11 @@ public class MainActivityFragment extends Fragment {
             case TOP_RATED_DESC:
                 if (!action_sort_by_top_rated.isChecked()) {
                     action_sort_by_top_rated.setChecked(true);
+                }
+                break;
+            case UPCOMING_DESC:
+                if (!action_sort_by_upcoming.isChecked()) {
+                    action_sort_by_upcoming.setChecked(true);
                 }
                 break;
             case FAVORITE:
@@ -123,6 +137,15 @@ public class MainActivityFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_sort_by_now_playing:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                mSortBy = NOW_PLAYING_DESC;
+                updateMovies(mSortBy);
+                return true;
             case R.id.action_sort_by_popular:
                 if (item.isChecked()) {
                     item.setChecked(false);
@@ -139,6 +162,15 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(true);
                 }
                 mSortBy = TOP_RATED_DESC;
+                updateMovies(mSortBy);
+                return true;
+            case R.id.action_sort_by_upcoming:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                mSortBy = UPCOMING_DESC;
                 updateMovies(mSortBy);
                 return true;
             case R.id.action_sort_by_favorite:
@@ -218,7 +250,7 @@ public class MainActivityFragment extends Fragment {
 
     public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+        private final String TAG = FetchMoviesTask.class.getSimpleName();
 
         private List<Movie> getMoviesDataFromJson(String jsonStr) throws JSONException {
             JSONObject movieJson = new JSONObject(jsonStr);
@@ -248,16 +280,19 @@ public class MainActivityFragment extends Fragment {
             String jsonStr = null;
 
             try {
-                final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-                final String SORT_BY_PARAM = "sort_by";
-                final String API_KEY_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(SORT_BY_PARAM, params[0])
-                        .appendQueryParameter(API_KEY_PARAM, BuildConfig.MOVIEDB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
+                URL url;
+                String categorySelected = params[0];
+                if (categorySelected.contains("now_playing")) {
+                    url = NetworkUtilities.buildUrl(MovieCategories.NOW_PLAYING);
+                } else if (categorySelected.contains("popular")) {
+                    url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
+                } else if (categorySelected.contains("top_rated")) {
+                    url = NetworkUtilities.buildUrl(MovieCategories.TOP_RATED);
+                } else if (categorySelected.contains("upcoming")) {
+                    url = NetworkUtilities.buildUrl(MovieCategories.UPCOMING);
+                } else {
+                    url = NetworkUtilities.buildUrl(MovieCategories.POPULAR);
+                }
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -283,7 +318,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 jsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
+                Log.e(TAG, "Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -293,7 +328,7 @@ public class MainActivityFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
+                        Log.e(TAG, "Error closing stream", e);
                     }
                 }
             }
@@ -301,7 +336,7 @@ public class MainActivityFragment extends Fragment {
             try {
                 return getMoviesDataFromJson(jsonStr);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 

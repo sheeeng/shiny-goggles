@@ -1,8 +1,6 @@
 package com.example.android.movies.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.movies.Constants;
 import com.example.android.movies.R;
 import com.example.android.movies.models.Movie;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends BaseAdapter {
+    private static final String TAG = MovieAdapter.class.getSimpleName();
 
     private final Context mContext;
     private final LayoutInflater mInflater;

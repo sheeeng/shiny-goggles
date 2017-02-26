@@ -9,6 +9,7 @@ import com.example.android.movies.models.Movie;
 public class MainActivity
         extends AppCompatActivity
         implements MainActivityFragment.Callback {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private boolean needTwoPanes;
 

@@ -4,5 +4,6 @@ public enum MovieCategories {
     NOW_PLAYING,
     POPULAR,
     TOP_RATED,
-    UPCOMING
+    UPCOMING,
+    FAVORITES
 }

@@ -8,6 +8,7 @@ import org.json.JSONObject;
  */
 
 public class MovieVideo {
+    private static final String TAG = MovieVideo.class.getSimpleName();
 
     private String id;
     private String iso_639_1;

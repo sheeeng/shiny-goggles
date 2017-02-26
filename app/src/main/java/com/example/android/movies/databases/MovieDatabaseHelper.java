@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.android.movies.Constants;
 
 public class MovieDatabaseHelper extends SQLiteOpenHelper {
+    private static final String TAG = MovieDatabaseHelper.class.getSimpleName();
+
     private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "movies.db";

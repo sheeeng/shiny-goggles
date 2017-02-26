@@ -1,8 +1,7 @@
 package com.example.android.movies;
 
-import org.json.JSONArray;
-
 public class Constants {
+    private static final String TAG = Constants.class.getSimpleName();
 
     // No need to use "static final" attributes because this is an interface an not a class.
     public interface URLS {

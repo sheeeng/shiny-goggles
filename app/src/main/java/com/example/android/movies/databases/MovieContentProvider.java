@@ -6,11 +6,12 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.SyncStateContract;
 
 import com.example.android.movies.Constants;
 
 public class MovieContentProvider extends ContentProvider {
+    private static final String TAG = MovieContentProvider.class.getSimpleName();
+
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDatabaseHelper mOpenHelper;
 

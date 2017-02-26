@@ -6,10 +6,14 @@
         app:showAsAction="ifRoom">
         <menu>
             <group android:checkableBehavior="single">
+                <item android:id="@+id/action_sort_by_now_playing"
+                    android:title="@string/action_sort_by_now_playing" />
                 <item android:id="@+id/action_sort_by_popular"
                     android:title="@string/action_sort_by_popular" />
                 <item android:id="@+id/action_sort_by_top_rated"
                     android:title="@string/action_sort_by_top_rated" />
+                <item android:id="@+id/action_sort_by_upcoming"
+                    android:title="@string/action_sort_by_upcoming" />
                 <item android:id="@+id/action_sort_by_favorite"
                     android:title="@string/action_sort_by_favorite" />
             </group>

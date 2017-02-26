@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
  * code organized.
  */
 public class ColorUtilities {
+    private static final String TAG = ColorUtilities.class.getSimpleName();
 
     /**
      * This method returns the appropriate shade of green to form the gradient

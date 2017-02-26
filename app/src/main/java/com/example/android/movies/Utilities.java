@@ -6,6 +6,8 @@ import android.database.Cursor;
 import com.example.android.movies.databases.MovieContract;
 
 public class Utilities {
+    static final String TAG = Utilities.class.getSimpleName();
+
     public static int isFavorited(Context context, int id) {
         Cursor cursor = context.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,  // uri
