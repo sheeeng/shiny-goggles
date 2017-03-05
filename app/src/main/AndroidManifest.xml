@@ -18,7 +18,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MovieDetailsActivity"></activity>
+        <activity android:name=".MovieDetailsActivity"
+            android:label="@string/movie_details"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.movies.MainActivity" />
+        </activity>
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".databases.MovieContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

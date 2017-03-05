@@ -14,7 +14,7 @@ import java.util.Scanner;
  * These utilities will be used to communicate with the network.
  */
 public class NetworkUtilities {
-    static final String LOG_TAG = NetworkUtilities.class.getSimpleName();
+    static final String TAG = NetworkUtilities.class.getSimpleName();
 
     final static String MOVIEDB_API_URL =
             "api.themoviedb.org";  // "http://api.themoviedb.org/3/movie/popular?";
@@ -50,15 +50,15 @@ public class NetworkUtilities {
         }
 
         uriBuilder.appendQueryParameter(PARAM_API_KEY_QUERY, BuildConfig.MOVIEDB_API_KEY);
-        Log.d(LOG_TAG, uriBuilder.toString());
+        Log.d(TAG, uriBuilder.toString());
 
         Uri builtUri = uriBuilder.build();
-        Log.d(LOG_TAG, builtUri.toString());
+        Log.d(TAG, builtUri.toString());
 
         URL url = null;
         try {
             url = new URL(builtUri.toString());
-            Log.d(LOG_TAG, url.toString());
+            Log.d(TAG, url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

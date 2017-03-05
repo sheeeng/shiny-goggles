@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <!--Material Greens-->
-    <!--In between colors were created with this tool:-->
+    <!-- Material Greens -->
+    <!-- In between colors were created with the below tool. -->
     <!-- http://meyerweb.com/eric/tools/color-blend/#339999::1:hex -->
     <color name="material50Green">#E8F5E9</color>
     <color name="material100Green">#C8E6C9</color>

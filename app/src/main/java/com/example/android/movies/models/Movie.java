@@ -1,7 +1,11 @@
-package com.example.android.movies;
+package com.example.android.movies.models;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.example.android.movies.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,9 +16,17 @@ UDACITY_REVIEW
 Awesome job implementing Parcelable!
 By doing so, you can optimize your app to save dynamic data/state efficiently. Well done! :clap:
 */
+
+/*
+ * https://developers.themoviedb.org/3/movies/get-now-playing
+ * https://developers.themoviedb.org/3/movies/get-popular-movies
+ * https://developers.themoviedb.org/3/movies/get-top-rated-movies
+ * https://developers.themoviedb.org/3/movies/get-upcoming
+ */
+
 public class Movie implements Parcelable {
 
-    private static final String LOG_TAG = Movie.class.getSimpleName();
+    private static final String TAG = Movie.class.getSimpleName();
 
     private String poster_path;
     private boolean adult;
@@ -36,7 +48,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(JSONObject movie) throws JSONException {
-        //Log.d(LOG_TAG, movie.toString());
+        Log.d(TAG, movie.toString());
 
         this.poster_path = movie.getString("poster_path");
         this.adult = movie.getBoolean("adult");
@@ -62,6 +74,33 @@ public class Movie implements Parcelable {
         this.vote_count = movie.getInt("vote_count");
         this.video = movie.getBoolean("video");
         this.vote_average = movie.getDouble("vote_average");
+    }
+
+    public Movie(Cursor cursor) {
+        this.poster_path = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_POSTER_PATH);
+        this.adult = ( cursor.getInt(Constants.MOVIE_DATABASE_COLUMNS.COL_ADULT) != 0 );
+        this.overview = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_OVERVIEW);
+        this.release_date = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_RELEASE_DATE);
+
+//        JSONArray jsonArray = cursor.get(Constants.MOVIE_DATABASE_COLUMNS.COL_GENRE_IDS);
+//        if (jsonArray == null) {
+//            this.genre_ids = new int[0];
+//        } else {
+//            this.genre_ids = new int[jsonArray.length()];
+//            for (int i = 0; i < jsonArray.length(); ++i) {
+//                this.genre_ids[i] = jsonArray.getInt(i);
+//            }
+//        }
+
+        this.id = cursor.getInt(Constants.MOVIE_DATABASE_COLUMNS.COL_MOVIE_ID);
+        this.original_title = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_ORIGINAL_TITLE);
+        this.original_language = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_ORIGINAL_LANGUAGE);
+        this.title = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_TITLE);
+        this.backdrop_path = cursor.getString(Constants.MOVIE_DATABASE_COLUMNS.COL_BACKDROP_PATH);
+        this.popularity = cursor.getDouble(Constants.MOVIE_DATABASE_COLUMNS.COL_POPULARITY);
+        this.vote_count = cursor.getInt(Constants.MOVIE_DATABASE_COLUMNS.COL_VOTE_COUNT);
+        this.video = ( cursor.getInt(Constants.MOVIE_DATABASE_COLUMNS.COL_VIDEO) != 0 );
+        this.vote_average = cursor.getDouble(Constants.MOVIE_DATABASE_COLUMNS.COL_VOTE_AVERAGE);
     }
 
     public String getPosterPath() {
@@ -118,7 +157,6 @@ public class Movie implements Parcelable {
         parcelOut.writeInt(vote_count);
         parcelOut.writeByte((byte)(video ? 1 : 0));
         parcelOut.writeDouble(vote_average);
-
     }
 
     /**
