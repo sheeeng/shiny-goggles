@@ -88,6 +88,19 @@ public class MainActivityFragment
     private AdapterView.OnItemSelectedListener spinnerOnItemSelectedListener =
             new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    if (parent == null) {
+                        Log.w(TAG, "AdapterView is NULL!");
+                        return;
+                    }
+
+                    if (view == null) {
+                        Log.w(TAG, "View is NULL!");
+                        return;
+                    }
+
+                    Log.d(TAG, "POS: " + pos);
+                    Log.d(TAG, "ID: " + id);
+
                     Log.d(TAG, parent.getClass().getName());
                     Log.d(TAG, view.getClass().getName());
 

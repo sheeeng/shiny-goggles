@@ -41,10 +41,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             Movie movieModel = new Movie(movie);
             results.add(movieModel);
         }
-
+        /*
         for(Movie movie : results) {
             Log.d(TAG, movie.getTitle());
         }
+        */
         return results;
     }
 
