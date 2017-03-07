@@ -56,6 +56,7 @@ public class MainActivityFragment
      */
     public interface Callback {
         void onItemSelected(Movie movie);
+        void onItemSelected(MenuItem menuItem);
     }
 
     @Override

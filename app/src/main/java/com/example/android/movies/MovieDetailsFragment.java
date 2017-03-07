@@ -12,6 +12,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +69,7 @@ public class MovieDetailsFragment
     private MovieReviewAdapter movieReviewAdapter;
 
     private ScrollView mDetailLayout;
+    private LinearLayout mMovieDetailsLayoutContainer;
 
     private Toast mToast;
 
@@ -201,6 +204,8 @@ public class MovieDetailsFragment
                     }.execute();
                 }
                 return true;
+            case R.id.action_select_movie_categories:
+                Log.d(TAG, "action_select_movie_categories selected.");
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -222,11 +227,14 @@ public class MovieDetailsFragment
         super.onViewCreated(view, savedInstanceState);
 
         mDetailLayout = (ScrollView) view.findViewById(R.id.movie_details_layout);
+        mMovieDetailsLayoutContainer = (LinearLayout) view.findViewById(R.id.movie_details_layout_container);
 
         if (mMovie != null) {
             mDetailLayout.setVisibility(View.VISIBLE);
+            mMovieDetailsLayoutContainer.setVisibility(View.VISIBLE);
         } else {
             mDetailLayout.setVisibility(View.INVISIBLE);
+            mMovieDetailsLayoutContainer.setVisibility(View.INVISIBLE);
         }
 
         mImageView = (ImageView) view.findViewById(R.id.detail_image);

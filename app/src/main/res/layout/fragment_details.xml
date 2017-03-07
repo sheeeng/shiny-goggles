@@ -7,9 +7,11 @@
     tools:context="com.example.android.movies.MovieDetailsActivity">
 
     <LinearLayout
+        android:id="@+id/movie_details_layout_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"

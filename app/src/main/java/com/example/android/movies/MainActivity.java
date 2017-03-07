@@ -3,6 +3,8 @@ package com.example.android.movies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.example.android.movies.models.Movie;
 
@@ -53,5 +55,10 @@ public class MainActivity
                     .putExtra(MovieDetailsFragment.DETAIL_MOVIE, movie);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onItemSelected(MenuItem menuItem) {
+        Log.d(TAG, menuItem.getTitle().toString());
     }
 }
