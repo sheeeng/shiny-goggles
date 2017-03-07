@@ -22,7 +22,9 @@ public class MainActivity
             needTwoPanes = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_details_container, new MovieDetailsFragment(),
+                        .replace(
+                                R.id.movie_details_container,
+                                new MovieDetailsFragment(),
                                 MovieDetailsFragment.TAG)
                         .commit();
             }
@@ -41,7 +43,10 @@ public class MainActivity
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_details_container, fragment, MovieDetailsFragment.TAG)
+                    .replace(
+                            R.id.movie_details_container,
+                            fragment,
+                            MovieDetailsFragment.TAG)
                     .commit();
         } else {
             Intent intent = new Intent(this, MovieDetailsActivity.class)

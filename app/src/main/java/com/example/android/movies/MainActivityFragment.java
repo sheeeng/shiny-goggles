@@ -61,8 +61,7 @@ public class MainActivityFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);  // If true, the fragment has menu items to contribute.
     }
 
 
@@ -72,7 +71,7 @@ public class MainActivityFragment
 
         inflater.inflate(R.menu.menu_fragment_main, menu);
 
-        MenuItem menuItem = menu.findItem(R.id.s_movie_categories);
+        MenuItem menuItem = menu.findItem(R.id.action_select_movie_categories);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -82,73 +81,75 @@ public class MainActivityFragment
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(spinnerOnItemSelectedListener);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (parent == null) {
+                    Log.w(TAG, "AdapterView is NULL!");
+                    return;
+                } else {
+                    Log.w(TAG, "AdapterView is valid!");
+                }
+
+                if (view == null) {
+                    Log.w(TAG, "View is NULL!");
+                    return;
+                } else  {
+                    Log.w(TAG, "View is valid!");
+                }
+
+                Log.d(TAG, "POS: " + pos);
+                Log.d(TAG, "ID: " + id);
+
+                Log.d(TAG, parent.getClass().getName());
+                Log.d(TAG, view.getClass().getName());
+
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+
+                String selectedCategory = parent.getItemAtPosition(pos).toString();
+                Log.d(TAG, selectedCategory);
+
+                String selectedValue = getResources().getStringArray(
+                        R.array.movie_categories_values)[parent.getSelectedItemPosition()];
+                Log.d(TAG, selectedValue);
+
+                Log.d(TAG, "Spinner: " + String.valueOf(parent.getSelectedItemPosition()));
+
+                switch (parent.getSelectedItemPosition()) {
+                    case 0:
+                        sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
+                        updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
+                        break;
+                    case 1:
+                        sortOption = MovieCategories.POPULAR.toString().toLowerCase();
+                        updateMovies(MovieCategories.POPULAR.toString().toLowerCase());
+                        break;
+                    case 2:
+                        sortOption = MovieCategories.TOP_RATED.toString().toLowerCase();
+                        updateMovies(MovieCategories.TOP_RATED.toString().toLowerCase());
+                        break;
+                    case 3:
+                        sortOption = MovieCategories.UPCOMING.toString().toLowerCase();
+                        updateMovies(MovieCategories.UPCOMING.toString().toLowerCase());
+                        break;
+                    case 4:
+                        sortOption = MovieCategories.FAVORITES.toString().toLowerCase();
+                        updateMovies(MovieCategories.FAVORITES.toString().toLowerCase());
+                        break;
+
+                    default:
+                        Log.w(TAG, "Unknown option.");
+                        sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
+                        updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
+                        break;
+                }
+            }
+
+            public void onNothingSelected(AdapterView parent) {
+                // Do nothing.
+            }
+        });
     }
-
-    private AdapterView.OnItemSelectedListener spinnerOnItemSelectedListener =
-            new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    if (parent == null) {
-                        Log.w(TAG, "AdapterView is NULL!");
-                        return;
-                    }
-
-                    if (view == null) {
-                        Log.w(TAG, "View is NULL!");
-                        return;
-                    }
-
-                    Log.d(TAG, "POS: " + pos);
-                    Log.d(TAG, "ID: " + id);
-
-                    Log.d(TAG, parent.getClass().getName());
-                    Log.d(TAG, view.getClass().getName());
-
-                    ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
-
-                    String selectedCategory = parent.getItemAtPosition(pos).toString();
-                    Log.d(TAG, selectedCategory);
-
-                    String selectedValue = getResources().getStringArray(
-                            R.array.movie_categories_values)[parent.getSelectedItemPosition()];
-                    Log.d(TAG, selectedValue);
-
-                    Log.d(TAG, "Spinner: " + String.valueOf(parent.getSelectedItemPosition()));
-
-                    switch (parent.getSelectedItemPosition()) {
-                        case 0:
-                            sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
-                            updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
-                            break;
-                        case 1:
-                            sortOption = MovieCategories.POPULAR.toString().toLowerCase();
-                            updateMovies(MovieCategories.POPULAR.toString().toLowerCase());
-                            break;
-                        case 2:
-                            sortOption = MovieCategories.TOP_RATED.toString().toLowerCase();
-                            updateMovies(MovieCategories.TOP_RATED.toString().toLowerCase());
-                            break;
-                        case 3:
-                            sortOption = MovieCategories.UPCOMING.toString().toLowerCase();
-                            updateMovies(MovieCategories.UPCOMING.toString().toLowerCase());
-                            break;
-                        case 4:
-                            sortOption = MovieCategories.FAVORITES.toString().toLowerCase();
-                            updateMovies(MovieCategories.FAVORITES.toString().toLowerCase());
-                            break;
-
-                        default:
-                            Log.w(TAG, "Unknown option.");
-                            sortOption = MovieCategories.NOW_PLAYING.toString().toLowerCase();
-                            updateMovies(MovieCategories.NOW_PLAYING.toString().toLowerCase());
-                            break;
-                    }
-                }
-
-                public void onNothingSelected(AdapterView parent) {
-                    // Do nothing.
-                }
-            };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

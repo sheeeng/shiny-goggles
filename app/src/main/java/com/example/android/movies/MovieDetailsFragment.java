@@ -80,11 +80,13 @@ public class MovieDetailsFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);  // If true, the fragment has menu items to contribute.
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
         if (mMovie != null) {
             inflater.inflate(R.menu.menu_fragment_detail, menu);
 
