@@ -41,9 +41,9 @@ public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, List<Movie>> 
             cursor.close();
         }
 
-        for(Movie movie : results) {
-            Log.d(TAG, movie.getTitle());
-        }
+//        for(Movie movie : results) {
+//            Log.d(TAG, movie.getTitle());
+//        }
         return results;
     }
 
@@ -56,7 +56,7 @@ public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, List<Movie>> 
                 null,  // selectionArgs
                 null  // sortOrder
         );
-        Log.d(TAG, cursor.toString());
+//        Log.d(TAG, cursor.toString());
         return getFavoriteMoviesDataFromCursor(cursor);
     }
 

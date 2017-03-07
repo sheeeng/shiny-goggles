@@ -39,7 +39,7 @@ public class MainActivity
     public void onItemSelected(Movie movie) {
         if (needTwoPanes) {
             Bundle arguments = new Bundle();
-            arguments.putParcelable(MovieDetailsFragment.DETAIL_MOVIE, movie);
+            arguments.putParcelable(MovieDetailsFragment.MOVIE_DETAILS, movie);
 
             MovieDetailsFragment fragment = new MovieDetailsFragment();
             fragment.setArguments(arguments);
@@ -52,13 +52,8 @@ public class MainActivity
                     .commit();
         } else {
             Intent intent = new Intent(this, MovieDetailsActivity.class)
-                    .putExtra(MovieDetailsFragment.DETAIL_MOVIE, movie);
+                    .putExtra(MovieDetailsFragment.MOVIE_DETAILS, movie);
             startActivity(intent);
         }
-    }
-
-    @Override
-    public void onItemSelected(MenuItem menuItem) {
-        Log.d(TAG, menuItem.getTitle().toString());
     }
 }

@@ -2,8 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_select_movie_categories"
-        android:title="Categories"
-        app:actionViewClass="android.widget.Spinner"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:title="@string/action_sort_by"
+        app:showAsAction="ifRoom">
+        <menu>
+            <group
+                android:id="@+id/menu_sort_by"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_query_now_playing_movies"
+                    android:checked="true"
+                    android:title="@string/action_query_now_playing_movies" />
+                <item
+                    android:id="@+id/action_query_popular_movies"
+                    android:title="@string/action_query_popular_movies" />
+                <item
+                    android:id="@+id/action_query_top_rated_movies"
+                    android:title="@string/action_query_top_rated_movies" />
+                <item
+                    android:id="@+id/action_query_upcoming_movies"
+                    android:title="@string/action_query_upcoming_movies" />
+
+                <item
+                    android:id="@+id/action_query_favorite_movies"
+                    android:title="@string/action_query_favorite_movies" />
+            </group>
+        </menu>
+    </item>
 </menu>

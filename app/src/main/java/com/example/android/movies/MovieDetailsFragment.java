@@ -12,7 +12,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,7 +47,7 @@ public class MovieDetailsFragment
         FetchReviewsTask.FetchReviewsTaskInterfaces {
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
 
-    static final String DETAIL_MOVIE = "MOVIE_DETAILS";
+    static final String MOVIE_DETAILS = "MOVIE_DETAILS";
 
     private Movie mMovie;
 
@@ -204,8 +203,6 @@ public class MovieDetailsFragment
                     }.execute();
                 }
                 return true;
-            case R.id.action_select_movie_categories:
-                Log.d(TAG, "action_select_movie_categories selected.");
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -214,9 +211,9 @@ public class MovieDetailsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mMovie = arguments.getParcelable(MovieDetailsFragment.DETAIL_MOVIE);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mMovie = bundle.getParcelable(MovieDetailsFragment.MOVIE_DETAILS);
         }
 
         return inflater.inflate(R.layout.fragment_details, container, false);

@@ -14,8 +14,8 @@ public class MovieDetailsActivity
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putParcelable(MovieDetailsFragment.DETAIL_MOVIE,
-                    getIntent().getParcelableExtra(MovieDetailsFragment.DETAIL_MOVIE));
+            arguments.putParcelable(MovieDetailsFragment.MOVIE_DETAILS,
+                    getIntent().getParcelableExtra(MovieDetailsFragment.MOVIE_DETAILS));
 
             MovieDetailsFragment fragment = new MovieDetailsFragment();
             fragment.setArguments(arguments);

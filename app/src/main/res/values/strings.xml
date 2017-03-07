@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Movies</string>
-    <string name="saved_instance_name">MoviesInstance</string>
+    <string name="action_sort_by">Sort</string>
     <string name="action_query_now_playing_movies">Now Playing</string>
     <string name="action_query_popular_movies">Popular</string>
     <string name="action_query_top_rated_movies">Top Rated</string>
@@ -9,14 +9,15 @@
     <string name="error_message_query_fail">Fail the query has.\nGet online you must.</string>
     <string name="movie_details">Movie Details</string>
     <string name="action_favorite">Favorite</string>
-    <string name="action_share">Share</string>
-    <string name="content_authority">com.example.android.movies</string>
     <string name="removed_from_favorites">Removed from your favorites.</string>
     <string name="added_to_favorites">Added to your favorites.</string>
-    <string name="title_activity_detail">Movie Details</string>
-    <string name="rating">Rating</string>
-    <string name="release_date">Released</string>
+    <string name="action_share">Share</string>
     <string name="details">Details</string>
+    <string name="release_date">Released</string>
+    <string name="rating">Rating</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="content_authority" translatable="false">com.example.android.movies</string>
+    <string name="saved_instance_movie" translatable="false">saved_instance_movie</string>
+    <string name="saved_instance_movie_category" translatable="false">saved_instance_movie_category</string>
 </resources>

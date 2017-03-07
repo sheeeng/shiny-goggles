@@ -1,9 +1,11 @@
 package com.example.android.movies.tasks;
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.movies.MovieCategories;
+import com.example.android.movies.R;
 import com.example.android.movies.Utilities;
 import com.example.android.movies.models.Movie;
 
@@ -16,7 +18,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
+public class FetchMoviesTask
+        extends AsyncTask<MovieCategories, Void, List<Movie>> {
     private final String TAG = FetchMoviesTask.class.getSimpleName();
 
     private FetchMoviesTaskInterfaces fetchMoviesTaskInterfacesListener;
@@ -50,28 +53,36 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
     }
 
     @Override
-    protected List<Movie> doInBackground(String... params) {
+    protected List<Movie> doInBackground(MovieCategories... params) {
 
         if (params.length == 0) {
             return null;
         }
 
-        String jsonStr = null;
+        String jsonStr;
 
         try {
             URL url;
-            String categorySelected = params[0];
+            MovieCategories selectedMovieCategories = params[0];
 
-            if (categorySelected.contains("now_playing")) {
-                url = Utilities.buildUrl(MovieCategories.NOW_PLAYING);
-            } else if (categorySelected.contains("popular")) {
-                url = Utilities.buildUrl(MovieCategories.POPULAR);
-            } else if (categorySelected.contains("top_rated")) {
-                url = Utilities.buildUrl(MovieCategories.TOP_RATED);
-            } else if (categorySelected.contains("upcoming")) {
-                url = Utilities.buildUrl(MovieCategories.UPCOMING);
-            } else {
-                url = Utilities.buildUrl(MovieCategories.POPULAR);
+            switch (selectedMovieCategories) {
+                case NOW_PLAYING:
+                    url = Utilities.buildUrl(MovieCategories.NOW_PLAYING);
+                    break;
+                case POPULAR:
+                    url = Utilities.buildUrl(MovieCategories.POPULAR);
+                    break;
+                case TOP_RATED:
+                    url = Utilities.buildUrl(MovieCategories.TOP_RATED);
+                    break;
+                case UPCOMING:
+                    url = Utilities.buildUrl(MovieCategories.UPCOMING);
+                    break;
+
+                default:
+                    Log.w(TAG, "Unknown movie category.");
+                    url = Utilities.buildUrl(MovieCategories.NOW_PLAYING);
+                    break;
             }
 
             jsonStr = Utilities.getResponseFromHttpUrl(url);
@@ -87,7 +98,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             e.printStackTrace();
         }
 
-        // This will only happen if there was an error getting or parsing the forecast.
         return null;
     }
 
