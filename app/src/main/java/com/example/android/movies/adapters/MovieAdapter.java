@@ -1,7 +1,6 @@
 package com.example.android.movies.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,8 +103,8 @@ public class MovieAdapter extends BaseAdapter {
         public final TextView titleView;
 
         public ViewHolder(View view) {
-            imageView = (ImageView) view.findViewById(R.id.grid_item_image);
-            titleView = (TextView) view.findViewById(R.id.grid_item_title);
+            imageView = (ImageView) view.findViewById(R.id.iv_grid_item_image);
+            titleView = (TextView) view.findViewById(R.id.tv_grid_item_title);
         }
     }
 }

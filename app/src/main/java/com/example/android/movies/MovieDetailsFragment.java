@@ -224,7 +224,7 @@ public class MovieDetailsFragment
         super.onViewCreated(view, savedInstanceState);
 
         mDetailLayout = (ScrollView) view.findViewById(R.id.movie_details_layout);
-        mMovieDetailsLayoutContainer = (LinearLayout) view.findViewById(R.id.movie_details_layout_container);
+        mMovieDetailsLayoutContainer = (LinearLayout) view.findViewById(R.id.ll_movie_details_layout);
 
         if (mMovie != null) {
             mDetailLayout.setVisibility(View.VISIBLE);
@@ -234,18 +234,18 @@ public class MovieDetailsFragment
             mMovieDetailsLayoutContainer.setVisibility(View.INVISIBLE);
         }
 
-        mImageView = (ImageView) view.findViewById(R.id.detail_image);
+        mImageView = (ImageView) view.findViewById(R.id.iv_movie_detail_image);
 
-        mTitleView = (TextView) view.findViewById(R.id.detail_title);
-        mOverviewView = (TextView) view.findViewById(R.id.detail_overview);
-        mDateView = (TextView) view.findViewById(R.id.detail_date);
-        mVoteAverageView = (TextView) view.findViewById(R.id.detail_vote_average);
+        mTitleView = (TextView) view.findViewById(R.id.tv_movie_detail_title);
+        mOverviewView = (TextView) view.findViewById(R.id.tv_movie_detail_overview);
+        mDateView = (TextView) view.findViewById(R.id.tv_movie_detail_date);
+        mVoteAverageView = (TextView) view.findViewById(R.id.tv_movie_detail_vote_average);
 
-        mTrailersView = (LinearListView) view.findViewById(R.id.detail_trailers);
-        mReviewsView = (LinearListView) view.findViewById(R.id.detail_reviews);
+        mTrailersView = (LinearListView) view.findViewById(R.id.lll_movie_detail_trailers);
+        mReviewsView = (LinearListView) view.findViewById(R.id.lll_movie_detail_reviews);
 
-        cardViewReview = (CardView) view.findViewById(R.id.detail_reviews_cardview);
-        cardViewVideo = (CardView) view.findViewById(R.id.detail_trailers_cardview);
+        cardViewReview = (CardView) view.findViewById(R.id.cv_movie_detail_reviews);
+        cardViewVideo = (CardView) view.findViewById(R.id.cv_movie_detail_trailers);
 
         movieVideoAdapter = new MovieVideoAdapter(getActivity(), new ArrayList<MovieVideo>());
         mTrailersView.setAdapter(movieVideoAdapter);

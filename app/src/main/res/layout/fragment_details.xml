@@ -7,7 +7,7 @@
     tools:context="com.example.android.movies.MovieDetailsActivity">
 
     <LinearLayout
-        android:id="@+id/movie_details_layout_container"
+        android:id="@+id/ll_movie_details_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,13 +18,13 @@
             android:layout_height="@dimen/grid_item_movie_height">
 
             <ImageView
-                android:id="@+id/detail_image"
+                android:id="@+id/iv_movie_detail_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
             <TextView
-                android:id="@+id/detail_title"
+                android:id="@+id/tv_movie_detail_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
@@ -42,7 +42,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/detail_overview"
+                android:id="@+id/tv_movie_detail_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size" />
@@ -84,7 +84,7 @@
                             android:layout_weight="1"  />
 
                         <TextView
-                            android:id="@+id/detail_date"
+                            android:id="@+id/tv_movie_detail_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
@@ -109,7 +109,7 @@
                             android:layout_weight="1"  />
 
                         <TextView
-                            android:id="@+id/detail_vote_average"
+                            android:id="@+id/tv_movie_detail_vote_average"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/text_size" />
@@ -121,7 +121,7 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id="@+id/detail_trailers_cardview"
+                android:id="@+id/cv_movie_detail_trailers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -146,7 +146,7 @@
                         android:layout_marginTop="20dp">
 
                         <com.linearlistview.LinearListView
-                            android:id="@+id/detail_trailers"
+                            android:id="@+id/lll_movie_detail_trailers"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
@@ -160,7 +160,7 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:id="@+id/detail_reviews_cardview"
+                android:id="@+id/cv_movie_detail_reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -180,7 +180,7 @@
                         android:textStyle="bold" />
 
                     <com.linearlistview.LinearListView
-                        android:id="@+id/detail_reviews"
+                        android:id="@+id/lll_movie_detail_reviews"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
