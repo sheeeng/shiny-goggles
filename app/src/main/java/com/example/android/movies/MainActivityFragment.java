@@ -25,9 +25,6 @@ import com.example.android.movies.tasks.FetchMoviesTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MainActivityFragment
         extends Fragment
         implements
@@ -35,8 +32,8 @@ public class MainActivityFragment
         FetchFavoriteMoviesTask.FetchFavoriteMoviesTaskInterfaces {
     static final String TAG = MainActivityFragment.class.getSimpleName();
 
-    @BindView(R.id.pb_query) ProgressBar progressBarQuery;
-    private GridView gridView;
+    private ProgressBar progressBarQuery;
+    private GridView gridViewMovies;
     private MovieAdapter movieAdapter;
 
     private MovieCategories selectedMovieCategories = MovieCategories.NOW_PLAYING;
@@ -102,6 +99,15 @@ public class MainActivityFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (!isConnectivityAvailable()) {
+            Log.d(TAG, getString(R.string.error_message_query_fail));
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    showToastNow(getString(R.string.error_message_query_fail));
+                }
+            });
+        }
+
         switch (item.getItemId()) {
             case R.id.action_query_now_playing_movies:
                 item.setChecked(true);
@@ -144,15 +150,15 @@ public class MainActivityFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ButterKnife.bind(this, view);
+        progressBarQuery = (ProgressBar) view.findViewById(R.id.pb_query);
 
-        gridView = (GridView) view.findViewById(R.id.movie_gridview);
+        gridViewMovies = (GridView) view.findViewById(R.id.movie_gridview);
 
         movieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
 
-        gridView.setAdapter(movieAdapter);
+        gridViewMovies.setAdapter(movieAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridViewMovies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movieAdapter.getItem(position);
