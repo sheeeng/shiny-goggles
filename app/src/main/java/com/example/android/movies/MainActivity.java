@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.example.android.movies.models.Movie;
 
@@ -43,6 +45,13 @@ public class MainActivity
 
             MovieDetailsFragment fragment = new MovieDetailsFragment();
             fragment.setArguments(arguments);
+
+            FrameLayout movie_details_container = (FrameLayout)
+                    findViewById(R.id.movie_details_container);
+
+            if (movie_details_container != null) {
+                movie_details_container.setVisibility(View.VISIBLE);
+            }
 
             getSupportFragmentManager().beginTransaction()
                     .replace(

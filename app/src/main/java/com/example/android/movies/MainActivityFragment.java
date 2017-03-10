@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -213,6 +214,13 @@ public class MainActivityFragment
                     showToastNow(getString(R.string.error_message_query_fail));
                 }
             });
+        }
+
+        FrameLayout movie_details_container = (FrameLayout)
+                getActivity().findViewById(R.id.movie_details_container);
+
+        if (movie_details_container != null) {
+            movie_details_container.setVisibility(View.GONE);
         }
 
         if (movieCategories == MovieCategories.FAVORITES) {
