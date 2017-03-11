@@ -3,6 +3,7 @@ package com.example.android.movies;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -37,9 +37,10 @@ public class MainActivityFragment
     private GridView gridViewMovies;
     private MovieAdapter movieAdapter;
 
-    private MovieCategories selectedMovieCategories = MovieCategories.NOW_PLAYING;
+    private MovieCategories movieCategory = MovieCategories.NOW_PLAYING;
+    private int moviePosition = -1;
 
-    private ArrayList<Movie> mMovies = null;
+    private ArrayList<Movie> arrayListMovies = null;
 
     private Toast toast;
 
@@ -53,7 +54,7 @@ public class MainActivityFragment
      * selections.
      */
     public interface Callback {
-        void onItemSelected(Movie movie);
+        void onItemSelected(Movie movie, int moviePosition);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class MainActivityFragment
         MenuItem action_query_upcoming_movies = menu.findItem(R.id.action_query_upcoming_movies);
         MenuItem action_query_favorite_movies = menu.findItem(R.id.action_query_favorite_movies);
 
-        switch (selectedMovieCategories) {
+        switch (movieCategory) {
             case NOW_PLAYING:
                 action_query_now_playing_movies.setChecked(true);
                 break;
@@ -109,31 +110,33 @@ public class MainActivityFragment
             });
         }
 
+        moviePosition = -1;
+
         switch (item.getItemId()) {
             case R.id.action_query_now_playing_movies:
                 item.setChecked(true);
-                selectedMovieCategories = MovieCategories.NOW_PLAYING;
-                updateMovies(selectedMovieCategories);
+                movieCategory = MovieCategories.NOW_PLAYING;
+                updateMovies(movieCategory);
                 return true;
             case R.id.action_query_popular_movies:
                 item.setChecked(true);
-                selectedMovieCategories = MovieCategories.POPULAR;
-                updateMovies(selectedMovieCategories);
+                movieCategory = MovieCategories.POPULAR;
+                updateMovies(movieCategory);
                 return true;
             case R.id.action_query_top_rated_movies:
                 item.setChecked(true);
-                selectedMovieCategories = MovieCategories.TOP_RATED;
-                updateMovies(selectedMovieCategories);
+                movieCategory = MovieCategories.TOP_RATED;
+                updateMovies(movieCategory);
                 return true;
             case R.id.action_query_upcoming_movies:
                 item.setChecked(true);
-                selectedMovieCategories = MovieCategories.UPCOMING;
-                updateMovies(selectedMovieCategories);
+                movieCategory = MovieCategories.UPCOMING;
+                updateMovies(movieCategory);
                 return true;
             case R.id.action_query_favorite_movies:
                 item.setChecked(true);
-                selectedMovieCategories = MovieCategories.FAVORITES;
-                updateMovies(selectedMovieCategories);
+                movieCategory = MovieCategories.FAVORITES;
+                updateMovies(movieCategory);
                 return true;
             default:
                 Log.w(TAG, "Unknown item selected.");
@@ -163,29 +166,34 @@ public class MainActivityFragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movieAdapter.getItem(position);
-                ((Callback) getActivity()).onItemSelected(movie);
+                moviePosition = position;
+                ((Callback) getActivity()).onItemSelected(movie, position);
             }
         });
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(
+                    getString(R.string.saved_instance_movies))) {
+                arrayListMovies = savedInstanceState.getParcelableArrayList(
+                        getString(R.string.saved_instance_movies));
+                movieAdapter.setData(arrayListMovies);
+            }
+
+            if (savedInstanceState.containsKey(
                     getString(R.string.saved_instance_movie_category))) {
-                selectedMovieCategories = MovieCategories.valueOf(
+                movieCategory = MovieCategories.valueOf(
                         savedInstanceState.getString(
                                 getString(R.string.saved_instance_movie_category)));
             }
 
             if (savedInstanceState.containsKey(
-                    getString(R.string.saved_instance_movie))) {
-                mMovies = savedInstanceState.getParcelableArrayList(
-                        getString(R.string.saved_instance_movie));
-                movieAdapter.setData(mMovies);
-            } else {
-                updateMovies(selectedMovieCategories);
+                    getString(R.string.saved_instance_movie_position))) {
+                moviePosition = savedInstanceState.getInt(
+                        getString(R.string.saved_instance_movie_position));
             }
-        } else {
-            updateMovies(selectedMovieCategories);
         }
+
+        updateMovies(movieCategory);
     }
 
 
@@ -216,13 +224,6 @@ public class MainActivityFragment
             });
         }
 
-        FrameLayout movie_details_container = (FrameLayout)
-                getActivity().findViewById(R.id.movie_details_container);
-
-        if (movie_details_container != null) {
-            movie_details_container.setVisibility(View.GONE);
-        }
-
         if (movieCategories == MovieCategories.FAVORITES) {
             new FetchFavoriteMoviesTask(getActivity(), this).execute();
         } else {
@@ -232,15 +233,46 @@ public class MainActivityFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (selectedMovieCategories != MovieCategories.NOW_PLAYING) {
-            outState.putString(
-                    getString(R.string.saved_instance_movie_category),
-                    MovieCategories.NOW_PLAYING.toString());
-        }
-        if (mMovies != null) {
-            outState.putParcelableArrayList(getString(R.string.saved_instance_movie), mMovies);
-        }
         super.onSaveInstanceState(outState);
+
+        Log.d(TAG, "The onSaveInstanceState() called.");
+
+        if (arrayListMovies != null) {
+            outState.putParcelableArrayList(
+                    getString(R.string.saved_instance_movies),
+                    arrayListMovies);
+        }
+
+        outState.putString(
+                getString(R.string.saved_instance_movie_category),
+                movieCategory.toString());
+
+        outState.putInt(
+                getString(R.string.saved_instance_movie_position),
+                moviePosition);
+    }
+
+
+    public void selectFirstOrPreviousMovieItem() {
+        if (moviePosition != GridView.INVALID_POSITION) {
+            gridViewMovies.smoothScrollToPosition(moviePosition);
+            gridViewMovies.performItemClick(
+                    gridViewMovies.getAdapter().getView(moviePosition, null, null),
+                    moviePosition,
+                    gridViewMovies.getAdapter().getItemId(moviePosition));
+        } else {
+            if (getActivity().getSupportFragmentManager().findFragmentByTag(
+                    MovieDetailsFragment.TAG) != null) {
+                new Handler().post(new Runnable() {
+                    public void run() {
+                        gridViewMovies.smoothScrollToPosition(0);
+                        gridViewMovies.performItemClick(
+                                gridViewMovies.getAdapter().getView(0, null, null),
+                                0,
+                                gridViewMovies.getAdapter().getItemId(0));
+                    }});
+            }
+        }
     }
 
 
@@ -263,8 +295,9 @@ public class MainActivityFragment
             if (movieAdapter != null) {
                 movieAdapter.setData(movies);
             }
-            mMovies = new ArrayList<>();
-            mMovies.addAll(movies);
+            arrayListMovies = new ArrayList<>();
+            arrayListMovies.addAll(movies);
+            selectFirstOrPreviousMovieItem();
         }
     }
 
@@ -288,8 +321,9 @@ public class MainActivityFragment
             if (movieAdapter != null) {
                 movieAdapter.setData(movies);
             }
-            mMovies = new ArrayList<>();
-            mMovies.addAll(movies);
+            arrayListMovies = new ArrayList<>();
+            arrayListMovies.addAll(movies);
+            selectFirstOrPreviousMovieItem();
         }
     }
 }

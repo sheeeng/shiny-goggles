@@ -38,20 +38,13 @@ public class MainActivity
     }
 
     @Override
-    public void onItemSelected(Movie movie) {
+    public void onItemSelected(Movie movie, int moviePosition) {
         if (needTwoPanes) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(MovieDetailsFragment.MOVIE_DETAILS, movie);
 
             MovieDetailsFragment fragment = new MovieDetailsFragment();
             fragment.setArguments(arguments);
-
-            FrameLayout movie_details_container = (FrameLayout)
-                    findViewById(R.id.movie_details_container);
-
-            if (movie_details_container != null) {
-                movie_details_container.setVisibility(View.VISIBLE);
-            }
 
             getSupportFragmentManager().beginTransaction()
                     .replace(

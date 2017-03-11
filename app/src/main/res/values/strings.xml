@@ -18,6 +18,7 @@
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
     <string name="content_authority" translatable="false">com.example.android.movies</string>
-    <string name="saved_instance_movie" translatable="false">saved_instance_movie</string>
+    <string name="saved_instance_movies" translatable="false">saved_instance_movies</string>
     <string name="saved_instance_movie_category" translatable="false">saved_instance_movie_category</string>
+    <string name="saved_instance_movie_position" translatable="false">saved_instance_movie_position</string>
 </resources>

@@ -84,11 +84,13 @@ public class MovieVideoAdapter  extends BaseAdapter {
 
         String youtubeThumbnailUrl = "http://img.youtube.com/vi/" + movieVideo.getKey() + "/0.jpg";
 
-        Glide.with(getContext())
-                .load(youtubeThumbnailUrl)
-                .placeholder(R.drawable.ic_image_black_24dp)
-                .error(R.drawable.ic_broken_image_black_24dp)
-                .into(viewHolder.imageView);
+        if (getContext() != null) {
+            Glide.with(getContext())
+                    .load(youtubeThumbnailUrl)
+                    .placeholder(R.drawable.ic_image_black_24dp)
+                    .error(R.drawable.ic_broken_image_black_24dp)
+                    .into(viewHolder.imageView);
+        }
 
         viewHolder.nameView.setText(movieVideo.getName());
 
