@@ -1,9 +1,11 @@
 package com.example.android.movies;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,6 +39,7 @@ public class MainActivityFragment
     private GridView gridViewMovies;
     private MovieAdapter movieAdapter;
 
+    private SharedPreferences sharedPreferences;
     private MovieCategories movieCategory = MovieCategories.NOW_PLAYING;
     private int moviePosition = -1;
 
@@ -54,7 +57,7 @@ public class MainActivityFragment
      * selections.
      */
     public interface Callback {
-        void onItemSelected(Movie movie, int moviePosition);
+        void onItemSelected(Movie movie, MovieCategories movieCategory, int moviePosition);
     }
 
     @Override
@@ -158,6 +161,8 @@ public class MainActivityFragment
 
         gridViewMovies = (GridView) view.findViewById(R.id.movie_gridview);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
         movieAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
 
         gridViewMovies.setAdapter(movieAdapter);
@@ -167,7 +172,7 @@ public class MainActivityFragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movieAdapter.getItem(position);
                 moviePosition = position;
-                ((Callback) getActivity()).onItemSelected(movie, position);
+                ((Callback) getActivity()).onItemSelected(movie, movieCategory, moviePosition);
             }
         });
 
@@ -178,20 +183,16 @@ public class MainActivityFragment
                         getString(R.string.saved_instance_movies));
                 movieAdapter.setData(arrayListMovies);
             }
-
-            if (savedInstanceState.containsKey(
-                    getString(R.string.saved_instance_movie_category))) {
-                movieCategory = MovieCategories.valueOf(
-                        savedInstanceState.getString(
-                                getString(R.string.saved_instance_movie_category)));
-            }
-
-            if (savedInstanceState.containsKey(
-                    getString(R.string.saved_instance_movie_position))) {
-                moviePosition = savedInstanceState.getInt(
-                        getString(R.string.saved_instance_movie_position));
-            }
         }
+
+        movieCategory = MovieCategories.valueOf(
+                sharedPreferences.getString(
+                        getString(R.string.saved_instance_movie_category),
+                        MovieCategories.NOW_PLAYING.toString()));
+
+        moviePosition = sharedPreferences.getInt(
+                getString(R.string.saved_instance_movie_position),
+                -1);
 
         updateMovies(movieCategory);
     }
@@ -243,13 +244,17 @@ public class MainActivityFragment
                     arrayListMovies);
         }
 
-        outState.putString(
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(
                 getString(R.string.saved_instance_movie_category),
                 movieCategory.toString());
 
-        outState.putInt(
+        editor.putInt(
                 getString(R.string.saved_instance_movie_position),
                 moviePosition);
+
+        editor.apply();
     }
 
 

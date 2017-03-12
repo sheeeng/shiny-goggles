@@ -1,11 +1,9 @@
 package com.example.android.movies.tasks;
 
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.movies.MovieCategories;
-import com.example.android.movies.R;
 import com.example.android.movies.Utilities;
 import com.example.android.movies.models.Movie;
 
